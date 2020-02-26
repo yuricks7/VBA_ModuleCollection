@@ -11,6 +11,6 @@ Most of the Modules are On Edit so that they are NOT guaranteed. If ok, feel fre
 ## LICENSE
 
 MITライセンスで作成しております。<br>
-詳細は、**[こちら](./LICENSE)**をご参照ください。
+詳細は、<b>[こちら](./LICENSE)</b>をご参照ください。
 
 **[ENG]** It is on MIT License. Please Refer to **[here](./LICENSE)**.

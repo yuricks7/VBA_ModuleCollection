@@ -2,11 +2,11 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "numberFormatter"
+Attribute VB_Name            = "NumberFormatter"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
 Option Explicit
 
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -102,21 +102,15 @@ End Sub
 ''
 ' 概要
 '
-' 【参考】
-' ●記事名● | ●サイト名●
-' ●URL●
+' @param {String}            targetFormat          元になる表記
+' @param {String}            unitName              数値の単位
+' @param {eNotationType}     notationType          表記タイプ
+' @param {eUserFormatColors} positiveColorConstant 正の数の色
+' @param {String}            negativeSymbol        負の数に付ける記号
+' @param {eUserFormatColors} negativeColorConstant 負の数の色
+' @param {eUserFormatColors} zeroColorConstant     ゼロの色
 '
-' 【参照設定】
-' [Name] ●●●●
-' [note] ●●●●●●●●●●●●
-'
-' @param { 型} name 内容
-' @param {型} name 内容
-' @param {型} name 内容
-'
-' @return {型} 内容
-'
-' @customfunction 内容
+' @return {String} 生成した文字列
 '
 Public Property Get NumberFormat(ByVal targetFormat As String, _
                                  Optional ByVal unitName As String = "", _

@@ -13,6 +13,13 @@ Option Explicit
 
 Private pErr As ErrObject
 
+Private Type tVarTypes
+    tTypeName As String
+    tConstants As String
+    tDescription As String
+End Type
+
+
 '━━━━━━━━━━━ プロパティ ━━━━━━━━━━━
 
 
@@ -56,13 +63,15 @@ End Sub
 ' http://www.openreference.org/articles/view/460
 '
 ' 【思案中】
-' 構造体の方が読みやすく書けそうだけど、クラスでは使えないかも。
+' 構造体の方が読みやすく書けそうだけど、クラスでは使えないかも。。。
 '
 ' @param {Long} varTypeConstant VBA上の型を表す組み込み定数
 '
 ' @return {Variant} 配列（組み込み定数, 意味）
 '
 Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
+    
+    Const SOMETHING_ARRAY As Long = 8192 'vbArray
     
     Dim typeDescriptions As Variant
     Select Case VarTypeConstant
@@ -103,7 +112,7 @@ Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
             typeDescriptions = Array("vbBoolean", "ブール型")
 
         Case 12
-            typeDescriptions = Array("vbVariant", "バリアント型配列")
+            typeDescriptions = Array("vbVariant", "Variant型の配列")
 
         Case 13
             typeDescriptions = Array("vbDataObject", "非OLEオートメーションオブジェクト")
@@ -117,13 +126,19 @@ Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
         Case 36
             typeDescriptions = Array("vbUserDefinedType", "バリアント型（含 ユーザー定義型）")
 
-        '違い↓がよくわからない…
-        Case 8204
-            typeDescriptions = Array("vbArray", "配列+型番号")
+        Case SOMETHING_ARRAY
+            typeDescriptions = Array("vbArray", "Variant型以外の配列")
 
-        '違い↑がよくわからない…
-        Case 8192
-            typeDescriptions = Array("vbArray", "配列（バリアント型以外）")
+        Case Is > SOMETHING_ARRAY
+            Dim smallCategoryConst As Long
+            smallCategoryConst = VarTypeConstant - SOMETHING_ARRAY
+        
+            Dim smallCategory As Variant
+            smallCategory = getVarTypes(smallCategoryConst)
+            typeDescriptions = Array( _
+                " = vbArray(" & SOMETHING_ARRAY & ") + " & smallCategory(0) & "(" & smallCategoryConst & ")", _
+                smallCategory(1) & "の配列" _
+            )
 
         '（万が一）どれにも当てはまらない場合
         Case Else

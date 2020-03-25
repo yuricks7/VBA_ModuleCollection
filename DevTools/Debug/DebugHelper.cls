@@ -130,11 +130,11 @@ Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
             typeDescriptions = Array("vbArray", "Variant型以外の配列")
 
         Case Is > SOMETHING_ARRAY
+            Dim smallCategory As Variant
             Dim smallCategoryConst As Long
             smallCategoryConst = VarTypeConstant - SOMETHING_ARRAY
-        
-            Dim smallCategory As Variant
             smallCategory = getVarTypes(smallCategoryConst)
+            
             typeDescriptions = Array( _
                 " = vbArray(" & SOMETHING_ARRAY & ") + " & smallCategory(0) & "(" & smallCategoryConst & ")", _
                 smallCategory(1) & "の配列" _
@@ -156,7 +156,7 @@ End Function
 ' @param {ErrObject} errObj             発生したエラーオブジェクト
 ' @param {String}    processDescription 実行中の処理（の概要）
 '
-Public Sub showErrMsg(ByRef errObj As ErrObject, _
+Public Sub ShowErrMsg(ByRef errObj As ErrObject, _
                       ByVal processDescription As String)
     
     Set pErr = errObj

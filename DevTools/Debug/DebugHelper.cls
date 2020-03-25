@@ -149,21 +149,42 @@ Public Sub showErrMsg(ByRef errObj As ErrObject, _
     With pErr
         '情報が無いときの代替メッセージ
         Dim errorSouce As String:       errorSouce = .Source
-        Dim errorDescription As String: errorDescription = .description
+        Dim errorDescription As String: errorDescription = .Description
         If errorSouce = "" Then errorSouce = "なし"
-        If errorDescription = "" Then errorDescription = "詳細不明です…"
-        
-        'メッセージを編集
-        Dim errMsg As String
-        errMsg = processDescription & "に何かエラーがあったみたい。" & vbCrLf
-        errMsg = errMsg & vbCrLf
-        errMsg = errMsg & "【概要】" & vbCrLf
-        errMsg = errMsg & "エラー番号：" & .Number & vbCrLf
-        errMsg = errMsg & "発生箇所：" & errorSouce & vbCrLf
-        errMsg = errMsg & "【詳細】" & vbCrLf
-        errMsg = errMsg & errorDescription
+        If errorDescription = "" Then errorDescription = "（詳細不明）"
+    
+        Dim errorNumber As Long: errorNumber = .Number
     End With
 
-    MsgBox errMsg
+    Dim m As String: m = ""
+    If errorNumber <> 0 Then
+        m = m & "申し訳ありません。" & vbCrLf
+        m = m & "マクロの実行中にエラーが発生しました。" & vbCrLf
+        m = m & vbCrLf
+        m = m & "迅速な解決のため、可能でしたら" & vbCrLf
+        m = m & "下記4点を添えてこのツールの管理者へご連絡ください。" & vbCrLf
+        m = m & vbCrLf
+        m = m & "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" & vbCrLf
+        m = m & "1. Excelのバージョン" & vbCrLf
+        m = m & "2. 実行したマクロ名（orボタン名）" & vbCrLf
+        m = m & "3. 入力した値" & vbCrLf
+        m = m & "4. この画面のスクリーンショット" & vbCrLf
+        m = m & "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" & vbCrLf
+        m = m & vbCrLf
+    End If
+        
+    m = m & "─────────────────────────────" & vbCrLf
+    m = m & "▼エラー内容" & vbCrLf
+    m = m & "─────────────────────────────" & vbCrLf
+    m = m & "【推定箇所】" & vbCrLf
+    m = m & "プロジェクト：" & errorSouce & vbCrLf
+    m = m & "処理内容　　：" & processDescription & vbCrLf
+    m = m & vbCrLf
+    m = m & "【エラー】" & vbCrLf
+    m = m & "番号：" & errorNumber & vbCrLf
+    m = m & "説明：" & errorDescription & vbCrLf
+    m = m & "─────────────────────────────" & vbCrLf
+    
+    MsgBox m
 
 End Sub

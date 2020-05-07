@@ -2,11 +2,13 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "DataCleanser"
+Attribute VB_Name            = "DataCleanser"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
+Attribute VB_Description     = "テキストデータの整形を行います。"
+
 Option Explicit
 
 Public Enum eOutputMode
@@ -29,19 +31,19 @@ Public Sub Run(ByVal targetRange As Range, _
         Case eOutputMode.eFixed
             '上書きされるので一旦避難
             Dim values As Variant: values = targetRange.Value
-            
+
             Call UnifyZenkakuHankaku(targetRange, 0)
             Call RemoveLineBreaksInCell(targetRange, offsetWidth)
-        
+
             'もとに戻す
             targetRange.Value = values
-        
+
         Case eOutputMode.eOneByOne
             Call UnifyZenkakuHankaku( _
                 targetRange, _
                 offsetWidth _
             )
-            
+
             Call RemoveLineBreaksInCell( _
                 targetRange.Offset(0, offsetWidth), _
                 1 _
@@ -67,7 +69,7 @@ Public Sub RemoveLineBreaksInCell(ByVal targetRange As Range, _
     Dim str As String
     For Each cell In targetRange
         If cell.Value = "" Then GoTo Continue
-        
+
         cell.Offset(0, offsetWidth).Value = Replace(cell.Value, vbLf, "")
 Continue:
     Next cell
@@ -100,11 +102,11 @@ Public Sub UnifyZenkakuHankaku(ByRef targetRange As Range, _
             Dim char As String
             char = Mid(allZenkakuChars, i, 1)
             char = replaceWhenAlphanumerics(char)
-            
+
             newChars = newChars & char
 Continue:
         Next i
-    
+
         '表記ゆれを統一
         newChars = replaceDoubleSpaces(newChars)
         newChars = replaceHyphens(newChars)
@@ -127,7 +129,7 @@ End Sub
 ' @return {String} 修正後の文字列
 '
 Private Function replaceWhenAlphanumerics(ByVal char As String) As String
-    
+
     '英数字のみ半角に置き換える
     If Not char Like "[ァ-ヶ]" Then char = StrConv(char, vbNarrow)
 
@@ -145,7 +147,7 @@ End Function
 Private Function replaceDoubleSpaces(ByVal chars As String) As String
 
     replaceDoubleSpaces = Replace(chars, "  ", " ")
-    
+
 End Function
 
 ''
@@ -165,5 +167,5 @@ Private Function replaceHyphens(ByVal chars As String) As String
     chars = Replace(chars, "ｰ", FULL_WIDTH_HYPHEN)
 
     replaceHyphens = chars
-    
+
 End Function

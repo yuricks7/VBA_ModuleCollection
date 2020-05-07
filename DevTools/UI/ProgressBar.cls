@@ -2,11 +2,11 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "ProgressBar"
+Attribute VB_Name            = "ProgressBar"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
 Option Explicit
 
 '━━━━━━━━ モジュールレベル変数 ━━━━━━━━━
@@ -51,6 +51,40 @@ End Sub
 '━━━━━━━━ メソッド ━━━━━━━━━
 
 ''
+' ステータスバーにメッセージを点滅させる
+'
+' @param {String} msg 表示する文字列
+'
+Public Sub Flash(ByVal msg As String)
+
+    With pApps
+        .StatusBar = False
+        .StatusBar = msg
+    End With
+
+End Sub
+
+''
+' ステータスバーにメッセージを表示する
+'
+' @param {String} msg 表示する文字列
+'
+Public Sub ShowMessage(ByVal msg As String)
+
+    pApps.StatusBar = msg
+
+End Sub
+
+''
+' ステータスバーの表示を解除する
+'
+Public Sub Clear()
+
+    pApps.StatusBar = False
+
+End Sub
+
+''
 ' ステータスバーに進捗を表示する
 '
 ' 【参考】
@@ -65,7 +99,7 @@ End Sub
 Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
                                       ByVal totalCounts As Long, _
                                       Optional ByVal description As String = "出力")
-    
+
     With Me
         'グラフ表示用
         Dim currentSymbols As String
@@ -79,7 +113,7 @@ Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
         m = description & "中..."
         m = m & " " & Left(currentSymbols, MAX_COUNTS)
         m = m & " " & Format(currentCounts / totalCounts, "0 %")
-        
+
         Apps.StatusBar = m
     End With
 
@@ -101,9 +135,9 @@ Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
                                    ByVal totalCounts As Long, _
                                    Optional ByVal units As String = "件", _
                                    Optional ByVal description As String = "出力")
-    
+
     With Me
-        
+
         'グラフ表示用
         Dim currentSymbols As String
         Const MAX_COUNTS As Long = 10
@@ -117,7 +151,7 @@ Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
         m = m & " " & Left(currentSymbols, MAX_COUNTS)
         m = m & " " & Format(currentCounts, "#,##0") & " " & units
         m = m & " / " & Format(totalCounts, "#,##0") & " " & units
-        
+
         Apps.StatusBar = m
     End With
 

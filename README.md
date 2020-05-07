@@ -20,7 +20,7 @@ Most of the Modules are On Edit so that they are NOT guaranteed. If ok, feel fre
 
   **[ENG]** It is on MIT License. Please Refer to **[here](./LICENSE)**.
 
-- コメント等に【参考】とあるものについては、原案の権利は参照先の執筆者・作成者に帰属します。
+- コメント等に【参考】とあるものについては、原案の権利は作成者もしくは参照記事の執筆者に帰属します。
 
   **[ENG]** If "【参考】" mentioned on comments in the codes, the right of the original ideas belong to the authors of the references or developpers.
 

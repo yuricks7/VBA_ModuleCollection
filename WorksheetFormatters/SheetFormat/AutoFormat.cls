@@ -2,11 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "AutoFormat"
+Attribute VB_Name            = "AutoFormat"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
+Attribute VB_Description     = "Excelのワークシートを整形します。"
 Option Explicit
 
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -45,21 +46,21 @@ Private pTypeOfDateTime_WithDayOfTheWeek As String
 ' フォント
 '
 Property Get Font() As String
-    
+
     pFont = "Meiryo UI"
     Font = pFont
 
 End Property
 
 Property Get FontSize() As Long
-    
+
     pFontSize = 8
     FontSize = pFontSize
 
 End Property
 
 Property Get HeaderFontSize() As Long
-    
+
     pHeaderFontSize = 9
     HeaderFontSize = pHeaderFontSize
 
@@ -69,7 +70,7 @@ End Property
 ' 標準の垂直位置
 '
 Property Get VerticalAlignment() As Long
-    
+
     pVerticalAlignment = xlBottom
     VerticalAlignment = pVerticalAlignment
 
@@ -87,7 +88,7 @@ End Property
 ' 行の高さ
 '
 Property Get RowHeight() As Double
-    
+
     pRowHeight = 14.4 '24px
     RowHeight = pRowHeight
 
@@ -97,7 +98,7 @@ End Property
 ' 標準の水平位置
 '
 Property Get HorizontalAlignment() As Long
-    
+
     pHorizontalAlignment = xlRight
     HorizontalAlignment = pHorizontalAlignment
 
@@ -115,21 +116,21 @@ End Property
 ' 列幅
 '
 Property Get ColumnWidth_MAX() As Double
-    
+
     pColumnWidth_MAX = 46.88 '380px
     ColumnWidth_MAX = pColumnWidth_MAX
 
 End Property
 
 Property Get ColumnWidth_MIDDLE() As Double
-    
+
     pColumnWidth_MIDDLE = 34.38 '280px
     ColumnWidth_MIDDLE = pColumnWidth_MIDDLE
 
 End Property
 
 Property Get ColumnWidth_NARROW() As Double
-    
+
     pColumnWidth_NARROW = 14.38 '120px
     ColumnWidth_NARROW = pColumnWidth_NARROW
 
@@ -137,7 +138,7 @@ End Property
 
 'Excel方眼紙
 Property Get ColumnWidth_GridPaper() As Double
-    
+
     pColumnWidth_GridPaper = 2.88 '28px
     ColumnWidth_GridPaper = pColumnWidth_GridPaper
 
@@ -145,21 +146,21 @@ End Property
 
 'H列、M列
 Property Get ColumnWidth_MinutesAndHour() As Double
-    
+
     pColumnWidth_MinutesAndHour = 3.88 '36px
     ColumnWidth_MinutesAndHour = pColumnWidth_MinutesAndHour
 
 End Property
 
 Property Get ColumnWidth_Date_WithDayOfTheWeek() As Double
-    
+
     pColumnWidth_Date_WithDayOfTheWeek = 14.38 '120px
     ColumnWidth_Date_WithDayOfTheWeek = pColumnWidth_Date_WithDayOfTheWeek
 
 End Property
 
 Property Get ColumnWidth_DateTime_WithDayOfTheWeek() As Double
-    
+
     pColumnWidth_DateTime_WithDayOfTheWeek = 20.38 '168px
     ColumnWidth_DateTime_WithDayOfTheWeek = pColumnWidth_DateTime_WithDayOfTheWeek
 
@@ -167,7 +168,7 @@ End Property
 
 'True / False
 Property Get ColumnWidth_Boolean() As Double
-    
+
     pColumnWidth_Boolean = 6.88 '60px
     ColumnWidth_Boolean = pColumnWidth_Boolean
 
@@ -177,42 +178,42 @@ End Property
 ' セルの表示形式
 '
 Property Get TypeOfStandard() As String
-    
+
     pTypeOfStandard = "G/標準"
     TypeOfStandard = pTypeOfStandard
 
 End Property
 
 Property Get TypeOfString() As String
-    
+
     pTypeOfString = "@"
     TypeOfString = pTypeOfString
 
 End Property
 
 Property Get TypeOfNumbers() As String
-    
+
     pTypeOfNumbers = "#,##0_ ;[赤]▼ #,##0 "
     TypeOfNumbers = pTypeOfNumbers
 
 End Property
 
 Property Get TypeOfNumbers00() As String
-    
+
     pTypeOfNumbers00 = "00"
     TypeOfNumbers00 = pTypeOfNumbers00
 
 End Property
 
 Property Get TypeOfDate() As String
-    
+
     pTypeOfDate = "yyyy/mm/dd"
     TypeOfDate = pTypeOfDate
 
 End Property
 
 Property Get TypeOfDateTime() As String
-    
+
     pTypeOfDateTime = "yyyy/mm/dd hh:mm"
     TypeOfDateTime = pTypeOfDateTime
 
@@ -262,7 +263,7 @@ Public Sub SetExcelFont(ByRef targetBook As Workbook)
                     .Name = strFontName
                     .Size = numFontSize
             End With
-            
+
             '文字の配置を調整
             .Rows.RowHeight = Me.RowHeight
             .Cells.VerticalAlignment = Me.VerticalAlignment
@@ -294,7 +295,7 @@ End Sub
 ' テーブルとシートの設定を行う
 '
 Public Sub Apply(ByRef targetSheet As Worksheet)
-    
+
     Dim targetBook As Workbook: Set targetBook = targetSheet.Parent
     If targetSheet Is Nothing Then Set targetSheet = targetBook.Worksheets(1)
 
@@ -305,32 +306,31 @@ Public Sub Apply(ByRef targetSheet As Worksheet)
         On Error GoTo NoTable
             Set targetList = .ListObjects(1)
         On Error GoTo 0
-        
+
         'スタイルを変更（2回目はエラーになるような？）
         On Error GoTo CreateStyle
         targetList.TableStyle = NEW_STYLE_NAME
         On Error GoTo 0
-        
+
         'ブックの「既定のスタイル」に設定
         targetBook.DefaultTableStyle = NEW_STYLE_NAME
-        
+
         'クエリの設定を変更
         If .QueryTables.Count > 0 Then
             Call SetQueryProperties(targetList)
         End If
-        
+
         'シート名をテーブル名と同期
         On Error Resume Next 'エラーならデフォルトのまま
         targetSheet.Name = targetList.Name
         On Error GoTo 0
     End With
-    
-    
+
     '▼後始末
     Call SetSheetStyle(targetSheet)
-    
+
     MsgBox "テーブルを整形しました。", vbInformation
-    
+
     Exit Sub
 
 NoTable:
@@ -352,13 +352,13 @@ End Sub
 '
 Private Sub createTableStyle(ByVal newStyleName As String, _
                              ByRef targetBook As Workbook)
-        
+
     'スタイルの追加
     Dim newStyle As TableStyle
     Set newStyle = targetBook.TableStyles.Add(newStyleName)
-    
+
     Call changeTableDesign(newStyle)
-        
+
 End Sub
 
 ''
@@ -371,13 +371,13 @@ End Sub
 ' @param {TableStyle} tableStyleObj 設定に使用するTableStyleオブジェクト
 '
 Private Sub changeTableDesign(ByRef tableStyleObj As TableStyle)
-    
+
     'テーブル全体（WholeStyle）
     Dim black As Long:         black = RGB(0, 0, 0)
     Dim lightGray As Long: lightGray = RGB(208, 206, 206)
-    
+
     Call setWholeStyle(tableStyleObj, black, lightGray)
-    
+
     '見出し行（HeaderRowStyle）
     Dim deepBlue As Long: deepBlue = RGB(0, 32, 96)
     Dim white As Long:       white = RGB(255, 255, 255)
@@ -399,7 +399,7 @@ Private Sub setWholeStyle(ByRef tableStyleObj As Variant, _
 
     Dim wholeTableElements As Variant
     Set wholeTableElements = tableStyleObj.TableStyleElements(xlWholeTable)
-    
+
     Dim outerLineConstants As Variant
     outerLineConstants = Array( _
                              xlEdgeTop, _
@@ -407,7 +407,7 @@ Private Sub setWholeStyle(ByRef tableStyleObj As Variant, _
                              xlEdgeLeft, _
                              xlEdgeRight _
                          )
-    
+
     Call setLines( _
         wholeTableElements, _
         outerLineConstants, _
@@ -415,13 +415,13 @@ Private Sub setWholeStyle(ByRef tableStyleObj As Variant, _
         xlContinuous, _
         xlMedium _
     )
-    
+
     Dim innerLineConstants As Variant
     innerLineConstants = Array( _
                              xlInsideVertical, _
                              xlInsideHorizontal _
                          )
-    
+
     Call setLines( _
         wholeTableElements, _
         innerLineConstants, _
@@ -446,7 +446,7 @@ Private Sub setLines(ByRef StyleElements As Variant, _
                      ByVal targetColor As Long, _
                      Optional ByVal lineStyle As Long = xlContinuous, _
                      Optional ByVal thickness As Long = xlThin)
- 
+
     With StyleElements
         Dim i As Long
         For i = 0 To UBound(linePositions)
@@ -475,15 +475,15 @@ Private Sub setHeaderStyle(ByRef tableStyleObj As TableStyle, _
 
    Dim headerRowElements As Variant
    Set headerRowElements = tableStyleObj.TableStyleElements(xlHeaderRow)
-   
+
     With headerRowElements
         .Interior.Color = interiorColor
-        
+
         With .Font
             .Color = fontColor
             .Bold = isBold
         End With
-    
+
     End With
 
 End Sub
@@ -494,7 +494,7 @@ End Sub
 ' @param {ListObject} targetList 対象のテーブル
 '
 Public Sub SetQueryProperties(ByRef targetList As ListObject)
-    
+
     With targetList.QueryTable
         .RowNumbers = False           '行番号
         .FillAdjacentFormulas = False 'クエリ テーブルの右側の数式を自動的に更新
@@ -522,39 +522,39 @@ Public Sub SetSheetStyle(ByRef targetSheet As Worksheet)
     With targetSheet
         Dim navyBlue As Long: navyBlue = RGB(0, 32, 96)
         .Tab.Color = navyBlue
-        
+
         '全体の設定
         With .Cells
             With .Font
                 .Name = Me.Font
                 .Size = Me.FontSize
             End With
-            
+
             .RowHeight = Me.RowHeight
             .VerticalAlignment = Me.VerticalAlignment
             .NumberFormatLocal = Me.TypeOfNumbers
         End With
-        
+
         'ヘッダーの設定
         Dim sheetHeader As Range: Set sheetHeader = .Rows(1)
         sheetHeader.Font.Size = Me.HeaderFontSize
         Call SetColorFormula(sheetHeader)
-        
+
         '列幅の設定
         With .Columns
             .ColumnWidth = Me.ColumnWidth_GridPaper
             .AutoFit
         End With
-        
+
         '列ごとの設定
         Call SetColumnStyles(targetSheet)
-        
+
         '後処理
         sheetHeader.HorizontalAlignment = xlLeft
-        
+
         .Cells(2, 2).Select
         ActiveWindow.FreezePanes = True '既に設定されていたら変わらない
-        
+
     End With
 
 End Sub
@@ -572,14 +572,14 @@ Public Sub SetColumnStyles(ByRef targetSheet As Worksheet)
         For i = 1 To .Columns.Count
             With .Columns(i)
                 If .Cells(1, 1).Value = "" Then Exit Sub
-            
+
                 '列名を見て列の設定を行う
                 Dim isApplied As Boolean
                 isApplied = applyColumnSettingsByHeader(.Columns(i))
-                
+
                 'その他
                 If isApplied = False Then Call setColumnWidth(.Columns(i))
-                
+
             End With
         Next i
     End With
@@ -609,14 +609,14 @@ Private Function applyColumnSettingsByHeader(ByRef targetColumn As Range) As Boo
                 Call applyColumnSettings(targetColumn, xlRight, .TypeOfNumbers, .ColumnWidth_MinutesAndHour)
                 applyColumnSettingsByHeader = True
                 Exit Function
-            
+
             Case "M_", "分_"
                 Call applyColumnSettings(targetColumn, xlLeft, .TypeOfNumbers00, .ColumnWidth_MinutesAndHour)
                 applyColumnSettingsByHeader = True
                 Exit Function
-        
+
         End Select
-        
+
         Select Case True '早期リターン
             '日時
             Case right2 = "日時"
@@ -628,31 +628,31 @@ Private Function applyColumnSettingsByHeader(ByRef targetColumn As Range) As Boo
                 Call applyColumnSettings(targetColumn, xlCenter, .TypeOfDate_WithDayOfTheWeek, .ColumnWidth_Date_WithDayOfTheWeek)
                 applyColumnSettingsByHeader = True
                 Exit Function
-            
+
             'ID
             Case right2 = "ID"
                 Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, canAutofit:=True)
                 applyColumnSettingsByHeader = True
                 Exit Function
-        
+
             'No
             Case (right2 = "No"), (right3 = "No.")
                 Call applyColumnSettings(targetColumn, xlRight, .TypeOfNumbers, canAutofit:=True)
                 applyColumnSettingsByHeader = True
                 Exit Function
-        
+
             'カテゴリ
             Case (right2 = "カテ"), (right4 = "カテゴリ")
                 Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, canAutofit:=True)
                 applyColumnSettingsByHeader = True
                 Exit Function
-            
+
             'True/False
             Case (left2 = "is"), (right1 = "？"), (right1 = "?")
                 Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, .ColumnWidth_Boolean)
                 applyColumnSettingsByHeader = True
                 Exit Function
-                                        
+
         End Select
 
     End With
@@ -673,22 +673,22 @@ Private Sub applyColumnSettings(ByRef targetColumn As Range, _
                                 Optional ByVal aNumberFormatLocal As String, _
                                 Optional ByVal aColumnWidth As Long, _
                                 Optional ByVal canAutofit As Boolean = False)
-    
+
     With targetColumn
         .HorizontalAlignment = aHorizontalAlignment
-        
+
         If aNumberFormatLocal = "" Then aNumberFormatLocal = Me.TypeOfStandard
         .NumberFormatLocal = aNumberFormatLocal
-        
+
         If canAutofit = False Then
             If IsEmpty(aColumnWidth) Then aColumnWidth = Me.ColumnWidth_NARROW
             .ColumnWidth = aColumnWidth
-        
+
         Else
             .AutoFit
-        
+
         End If
-    
+
     End With
 
 End Sub
@@ -705,15 +705,15 @@ Private Sub setColumnWidth(ByRef targetColumn As Range)
         Select Case .ColumnWidth
             Case Is > Me.ColumnWidth_MAX
                 .ColumnWidth = Me.ColumnWidth_MAX
-            
+
             Case Is > Me.ColumnWidth_MIDDLE
                 .ColumnWidth = Me.ColumnWidth_MIDDLE
-            
+
             Case Is > Me.ColumnWidth_MIDDLE
                 .ColumnWidth = Me.ColumnWidth_NARROW
-            
+
         End Select
-        
+
     End With
 
 End Sub
@@ -725,7 +725,7 @@ End Sub
 ' @param {Range} targetRow 設定の対象範囲
 '
 Public Sub SetColorFormula(ByRef targetRow As Range)
-    
+
     With targetRow
         .FormatConditions.Add Type:=xlExpression, _
                               Formula1:="=ISFORMULA(A$2)"
@@ -735,9 +735,9 @@ Public Sub SetColorFormula(ByRef targetRow As Range)
                 .Bold = True
                 .Color = RGB(0, 0, 0) '黒
             End With
-            
+
             .Interior.Color = RGB(226, 239, 218) '淡い緑
-            
+
             .StopIfTrue = False
         End With
     End With

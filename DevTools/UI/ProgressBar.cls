@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
 Attribute VB_PredeclaredId   = False
 Attribute VB_Exposed         = False
+Attribute VB_Description     = "マクロの進捗等、ステータスバーの表示を制御します。"
 Option Explicit
 
 '━━━━━━━━ モジュールレベル変数 ━━━━━━━━━

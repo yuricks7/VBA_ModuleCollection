@@ -8,7 +8,7 @@ Public Sub FormatSheet()
 
     Dim myFormat As AutoFormat
     Set myFormat = New AutoFormat
-    
+
     Call myFormat.Apply(ActiveSheet)
 
 End Sub
@@ -20,7 +20,7 @@ Public Sub ModifyExcelFont()
 
     Dim myFormat As AutoFormat
     Set myFormat = New AutoFormat
-    
+
     Call myFormat.SetExcelFont(ActiveWorkbook)
 
 End Sub

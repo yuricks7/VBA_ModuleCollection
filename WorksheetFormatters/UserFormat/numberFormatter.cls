@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
 Attribute VB_PredeclaredId   = False
 Attribute VB_Exposed         = False
+Attribute VB_Description     = "数値の表示書式を定義します。"
 Option Explicit
 
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -122,13 +123,13 @@ Public Property Get NumberFormat(ByVal targetFormat As String, _
 
     '単位
     Dim unit As String: unit = addSpace(unitName)
-    
+
     '正の数、負の数、ゼロの表記
     Dim positiveNumberNotaion As String, negativeNumberNotaion As String, zeroNotaion As String
     positiveNumberNotaion = getNumberNoation(ePositiveOrNegative.Positive, targetFormat, unit, positiveColorConstant)
     negativeNumberNotaion = getNumberNoation(ePositiveOrNegative.Negative, targetFormat, unit, negativeColorConstant, negativeSymbol)
               zeroNotaion = getNumberNoation(ePositiveOrNegative.Zero, "0", unit, zeroColorConstant)
-    
+
     '連結
     NumberFormat = join(notationType, positiveNumberNotaion, negativeNumberNotaion, zeroNotaion)
 
@@ -172,19 +173,19 @@ Private Function getNumberNoation(ByVal aNumberNotation As ePositiveOrNegative, 
                                   Optional ByVal negativeSymbol As String = "▼") As String
 
     Dim ret As String
-    
+
     Select Case aNumberNotation
         Case ePositiveOrNegative.Positive
             ret = GetUserFormatColor(colorConstant) & sourceFormat & "_" & pHalfWidthSpace & unit
-        
+
         Case ePositiveOrNegative.Negative
             ret = ";" & GetUserFormatColor(colorConstant) & negativeSymbol & sourceFormat & pHalfWidthSpace & unit
-        
+
         Case ePositiveOrNegative.Zero
             ret = ";" & GetUserFormatColor(colorConstant) & sourceFormat & pHalfWidthSpace & unit
-    
+
     End Select
-    
+
     getNumberNoation = ret
 
 End Function
@@ -205,14 +206,14 @@ Private Function join(ByVal notationType As eNotationType, _
                       Optional ByVal zeroNotaion As String) As String
 
     Dim ret As String
-    
+
     Select Case notationType
         Case eNotationType.Positive
             ret = positiveNumberNotaion
-        
+
         Case eNotationType.Positive_Negative
             ret = positiveNumberNotaion & negativeNumberNotaion
-        
+
         Case eNotationType.Positive_Negative_Zero
             ret = positiveNumberNotaion & negativeNumberNotaion & zeroNotaion
     End Select
@@ -238,7 +239,7 @@ Public Function GetUserFormatColor(ByVal formatColor As eUserFormatColors) As St
         GetUserFormatColor = ""
         Exit Function
     End If
-    
+
     GetUserFormatColor = "[色" & formatColor & "]"
 
 End Function

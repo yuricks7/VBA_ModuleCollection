@@ -2,11 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "DebugHelper"
+Attribute VB_Name            = "DebugHelper"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
+Attribute VB_Description     = "自作エラー文の出力や、デバッグの補助を行います。"
 Option Explicit
 
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -70,9 +71,9 @@ End Sub
 ' @return {Variant} 配列（組み込み定数, 意味）
 '
 Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
-    
+
     Const SOMETHING_ARRAY As Long = 8192 'vbArray
-    
+
     Dim typeDescriptions As Variant
     Select Case VarTypeConstant
         Case 0
@@ -134,7 +135,7 @@ Private Function getVarTypes(ByVal VarTypeConstant As Long) As Variant
             Dim smallCategoryConst As Long
             smallCategoryConst = VarTypeConstant - SOMETHING_ARRAY
             smallCategory = getVarTypes(smallCategoryConst)
-            
+
             typeDescriptions = Array( _
                 " = vbArray(" & SOMETHING_ARRAY & ") + " & smallCategory(0) & "(" & smallCategoryConst & ")", _
                 smallCategory(1) & "の配列" _
@@ -158,16 +159,16 @@ End Function
 '
 Public Sub ShowErrMsg(ByRef errObj As ErrObject, _
                       ByVal processDescription As String)
-    
+
     Set pErr = errObj
-    
+
     With pErr
         '情報が無いときの代替メッセージ
         Dim errorSouce As String:       errorSouce = .Source
         Dim errorDescription As String: errorDescription = .Description
         If errorSouce = "" Then errorSouce = "なし"
         If errorDescription = "" Then errorDescription = "（詳細不明）"
-    
+
         Dim errorNumber As Long: errorNumber = .Number
     End With
 
@@ -187,7 +188,7 @@ Public Sub ShowErrMsg(ByRef errObj As ErrObject, _
         m = m & "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" & vbCrLf
         m = m & vbCrLf
     End If
-        
+
     m = m & "─────────────────────────────" & vbCrLf
     m = m & "▼エラー内容" & vbCrLf
     m = m & "─────────────────────────────" & vbCrLf
@@ -199,7 +200,7 @@ Public Sub ShowErrMsg(ByRef errObj As ErrObject, _
     m = m & "番号：" & errorNumber & vbCrLf
     m = m & "説明：" & errorDescription & vbCrLf
     m = m & "─────────────────────────────" & vbCrLf
-    
+
     MsgBox m
 
 End Sub

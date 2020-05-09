@@ -2,12 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name            = "Record"
+Attribute VB_Name = "Record"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable       = False
-Attribute VB_PredeclaredId   = False
-Attribute VB_Exposed         = False
-Attribute VB_Description     = "1行分をデータのコレクションとして扱います。"
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Attribute VB_Description = "1行分をデータのコレクションとして扱います。"
 Option Explicit
 
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -34,7 +34,7 @@ End Sub
 '
 Public Function Import(ByRef Row As Range) As Record
 
-    'メモリ節約のため使用範囲だけ取得する
+    'メモリ節約のため、使用済み範囲のみとする
     Dim importRange As Range
     With Row
         Set importRange = .Range( _
@@ -55,6 +55,9 @@ End Function
 
 ' ━━━━━━━━━━━ プロパティ ━━━━━━━━━━━
 
+''
+' 列数
+'
 Public Property Get FieldCounts() As Long
 
     FieldCounts = pRecord.Count
@@ -82,8 +85,8 @@ End Property
 ' @return {Variant} レコード1行分
 '
 Public Function Item(ByVal key As Long) As Variant
-    Attribute Item.VB_Description = "レコードから1セル分の値を取得する"
-    Attribute Item.VB_UserMemId   = 0
+Attribute Item.VB_Description = "レコードから1セル分の値を取得する"
+Attribute Item.VB_UserMemId = 0
 
     Item = pRecord.Item(key)
 

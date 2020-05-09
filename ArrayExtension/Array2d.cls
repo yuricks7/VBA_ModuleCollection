@@ -69,13 +69,13 @@ End Sub
 ' シートの値
 '
 Public Property Get Values() As Variant
-    Attribute Values.VB_Description = "シートの値を表す二次元配列"
-    Attribute Values.VB_UserMemId   = 0
+Attribute Values.VB_Description = "シートの値を表す二次元配列"
+Attribute Values.VB_UserMemId   = 0
     Values = pValues
 End Property
 Public Property Let Values(ByVal aValues As Variant)
-    Attribute Values.VB_Description = "シートの値を表す二次元配列"
-    Attribute Values.VB_UserMemId   = 0
+Attribute Values.VB_Description = "シートの値を表す二次元配列"
+Attribute Values.VB_UserMemId   = 0
     pValues = aValues
 End Property
 
@@ -112,3 +112,32 @@ End Property
 
 ' ━━━━━━━━━━━ メソッド ━━━━━━━━━━━
 
+''
+' 2層になった配列を二次元配列に置き換える
+'
+' 【参照】
+' https://qiita.com/11295/items/7364a80814bca5b734ff
+'
+' @param {array} ジャグ配列（arr(0)(0)形式）
+'
+' @return {array} 二次元配列（arr(0, 0)形式）
+'
+Public Function NestToFlat(ByRef nestArray2d As Variant) As Variant
+
+    Dim flatArray2d() As Variant
+    ReDim flatArray2d(0 To UBound(nestArray2d), _
+                      0 To UBound(nestArray2d(0)))
+
+    Dim r As Long
+    Dim rowData As Variant
+    For r = 0 To UBound(nestArray2d)
+        Dim c As Long
+        Dim cellValue As Variant
+        For c = 0 To UBound(rowData)
+            flatArray2d(r + 1, c + 1) = cellValue
+        Next
+    Next
+
+    NestToFlat = flatArray2d
+
+End Function

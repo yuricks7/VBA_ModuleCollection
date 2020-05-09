@@ -13,7 +13,6 @@ Option Explicit
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
 
 Private pArray As Variant
-Private pDelimiter As String
 
 ' ━━━━━━━━━━━ コンストラクタ等 ━━━━━━━━━━━
 
@@ -28,8 +27,6 @@ Public Function Init(Optional ByVal maxIndex As Long = 0) As Array1d
 
     ReDim pArray(maxIndex) '配列の初期化
 
-    pDelimiter = ","
-
     Set Init = Me
 
 End Function
@@ -42,9 +39,11 @@ End Function
 Public Property Get Arr() As Variant
     Arr = pArray
 End Property
-Public Property Set Arr(ByVal aArray As Variant)
+Public Property Let Arr(ByVal aArray As Variant)
     pArray = aArray
-       Arr = pArray
+End Property
+Public Property Set Arr(ByVal aArray As Variant)
+    Set pArray = aArray
 End Property
 
 ''

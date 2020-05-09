@@ -2,11 +2,11 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Records"
+Attribute VB_Name            = "Records"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = False
+Attribute VB_Exposed         = False
 Option Explicit
 
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -22,7 +22,7 @@ Private pValues As Variant
 ' 初期化
 '
 Private Sub Class_Initialize()
-    
+
     Set pRecords = New Collection
 
 End Sub
@@ -38,9 +38,9 @@ Public Function Import(ByRef srcSheet As Worksheet) As Records
 
     Me.Values = srcSheet.UsedRange.Value
     Call importRowsData(srcSheet)
-    
+
     Set Import = Me
-    
+
 End Function
 
 ''
@@ -63,10 +63,10 @@ Private Sub importRowsData(ByRef srcSheet As Worksheet)
     For i = 1 To importRange.Rows.Count
         Dim r As Record: Set r = New Record
         r.Import (srcSheet.Rows(i))
-        
+
         pRecords.Add r
     Next i
-    
+
 End Sub
 
 ' ━━━━━━━━━━━ プロパティ ━━━━━━━━━━━
@@ -87,6 +87,8 @@ End Property
 ' @return {Collection} シート1枚分
 '
 Property Get Items() As Collection
+Attribute Items.VB_Description = "シート1枚分のレコードを格納したコレクション"
+Attribute Items.VB_UserMemId   = 0
 
     Set Items = pRecords
 
@@ -95,7 +97,7 @@ End Property
 ' ━━━━━━━━━━━ メソッド ━━━━━━━━━━━
 
 ''
-' レコードから1セル分の値を取得する
+' レコードから1行分の値を取得する
 '
 ' @param {Long} Itemのキー（数値）
 '

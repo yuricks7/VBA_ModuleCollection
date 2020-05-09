@@ -36,13 +36,13 @@ End Function
 ''
 ' ”z—ñ
 '
-Public Property Get Arr() As Variant
-    Arr = pArray
+Public Property Get arr() As Variant
+    arr = pArray
 End Property
-Public Property Let Arr(ByVal aArray As Variant)
+Public Property Let arr(ByVal aArray As Variant)
     pArray = aArray
 End Property
-Public Property Set Arr(ByVal aArray As Variant)
+Public Property Set arr(ByVal aArray As Variant)
     Set pArray = aArray
 End Property
 
@@ -53,11 +53,11 @@ Public Property Get Elements(ByVal Index As Long) As Variant
     Elements = pArray(Index)
 End Property
 Public Property Let Elements(ByVal Index As Long, _
-                      ByVal assginValue As Variant)
+                             ByVal assginValue As Variant)
     pArray(Index) = assginValue
 End Property
 Public Property Set Elements(ByVal Index As Long, _
-                      ByRef assginValue As Variant)
+                             ByRef assginValue As Variant)
     Set pArray(Index) = assginValue
 End Property
 
@@ -160,7 +160,7 @@ End Function
 Public Function JoinVia(Optional ByVal delimiter As String = ", ") As String
 
     Dim str As String: str = Join(pArray, delimiter)
-     If str = "" Then: str = "EMPTY"
+    If str = "" Then str = "EMPTY"
 
     JoinVia = str
 

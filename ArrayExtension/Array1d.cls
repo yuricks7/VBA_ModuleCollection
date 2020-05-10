@@ -36,35 +36,62 @@ End Function
 ''
 ' 配列
 '
-Public Property Get arr() As Variant
-    arr = pArray
+Public Property Get Elements() As Variant
+Attribute Elements.VB_Description = "クラスの操作対象とする配列"
+Attribute Elements.VB_UserMemId   = 0
+    Elements = pArray
 End Property
-Public Property Let arr(ByVal aArray As Variant)
+Public Property Let Elements(ByVal aArray As Variant)
+Attribute Elements.VB_Description = "クラスの操作対象とする配列"
+Attribute Elements.VB_UserMemId   = 0
     pArray = aArray
 End Property
-Public Property Set arr(ByVal aArray As Variant)
+Public Property Set Elements(ByVal aArray As Variant)
+Attribute Elements.VB_Description = "クラスの操作対象とする配列"
+Attribute Elements.VB_UserMemId   = 0
     Set pArray = aArray
 End Property
 
-'''
-'' 多次元配列を一次元配列に変換する
 ''
-'' @param {●型●} name ●概要●
-'' @param {●型●} name ●概要●
-'' @param {●型●} name ●概要●
+' 要素
+'
+Public Property Get Element(ByVal Index As Long) As Variant
+
+    On Error GoTo ErrorCatch
+    Dim e As Variant
+    Select Case dimension(pArray)
+        Case 1
+            e = pArray(Index)
+
+        Case Else
+            GoTo ErrorCatch
+
+    End Select
+
+    Element = e
+
+    Exit Property
+
+ErrorCatch:
+
+    MsgBox "配列の次元数を確認してください。"
+
+End Property
+Public Property Let Element(ByVal Index As Long, _
+                            ByVal assginValue As Variant)
+    pArray(Index) = assginValue
+End Property
+Public Property Set Element(ByVal Index As Long, _
+                            ByRef assginValue As Variant)
+    Set pArray(Index) = assginValue
+End Property
+
 ''
-'' @return {●型●} ●概要●
-''
-'Public Function To1d() As Variant
+' 要素数
 '
-'    Dim maxIndex As Long: maxIndex = UBound(pArray, dimension(pArray))
-'
-'    Dim arr1d As Variant
-'    ReDim arr1d(maxIndex) '配列の初期化
-'
-'
-'
-'End Function
+Public Property Get Length() As Long
+    Length = UBound(pArray)
+End Property
 
 ''
 ' 配列の次元数をログ出力する
@@ -93,50 +120,6 @@ Private Property Get dimension(ByRef arr As Variant) As Long
     '（エラー発生時に次元 + 1 となっているので、2を引く）
     dimension = d - 2
 
-End Property
-
-''
-' 要素
-'
-Public Property Get Elements(ByVal Index As Long) As Variant
-
-    On Error GoTo ErrorCatch
-    Dim e As Variant
-    Select Case dimension(pArray)
-        Case 1
-            e = pArray(Index)
-
-        Case 2
-            e = pArray(1, Index)
-
-        Case Else
-            GoTo ErrorCatch
-
-    End Select
-
-    Elements = e
-
-    Exit Property
-
-ErrorCatch:
-
-    MsgBox "配列の次元数が適切でないかもしれません。"
-
-End Property
-Public Property Let Elements(ByVal Index As Long, _
-                             ByVal assginValue As Variant)
-    pArray(Index) = assginValue
-End Property
-Public Property Set Elements(ByVal Index As Long, _
-                             ByRef assginValue As Variant)
-    Set pArray(Index) = assginValue
-End Property
-
-''
-' 要素数
-'
-Public Property Get Length() As Long
-    Length = UBound(pArray)
 End Property
 
 ' ━━━━━━━━━━━ メソッド ━━━━━━━━━━━

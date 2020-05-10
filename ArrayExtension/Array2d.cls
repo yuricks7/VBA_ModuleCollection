@@ -51,15 +51,26 @@ End Function
 '
 Private Sub convertRowsToCollection(ByRef srcSheet As Worksheet)
 
-    Dim dataRange As Range
-    Set dataRange = srcSheet.UsedRange
+    Dim dataRange As Range: Set dataRange = srcSheet.UsedRange
+    Dim dataCols As Range:  Set dataCols = dataRange.Columns
 
-    Dim i As Long
-    For i = 1 To dataRange.Rows.Count
-        Dim arr1d As Array1d: Set arr1d = New Array1d
-        arr1d.arr = dataRange.Rows(i).Value
-        Call Me.Array1ds.Add(arr1d)
-    Next i
+    Dim cols As Long: cols = dataRange.Columns.Count
+
+    Dim r As Long
+    For r = 1 To dataRange.Rows.Count
+
+        '一次元配列に変換
+        Dim arr As Variant: ReDim arr(cols - 1)
+        Dim c As Long
+        For c = 1 To cols
+            arr(c - 1) = dataRange.Cells(r, c).Value
+        Next c
+
+        'コレクションに追加
+        Array1d.Init(cols - 1).arr = arr
+        Call Me.Array1ds.Add(Array1d)
+
+    Next r
 
 End Sub
 
@@ -169,7 +180,7 @@ Public Function Splice(ByVal start As Long, _
             '削除 or 置き換え
             Case Is >= start + n
                 If newItem Is Nothing Then GoTo Continue
-                newArray1ds.Add replaceItem
+                newArray1ds.Add newItem
 
             'コピー
             Case Else

@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
 Attribute VB_PredeclaredId   = True
 Attribute VB_Exposed         = False
-Attribute VB_Description     = "配列を扱いやすくします。"
+Attribute VB_Description     = "一次元配列を扱いやすくします。"
 Option Explicit
 
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -46,11 +46,82 @@ Public Property Set arr(ByVal aArray As Variant)
     Set pArray = aArray
 End Property
 
+'''
+'' 多次元配列を一次元配列に変換する
+''
+'' @param {●型●} name ●概要●
+'' @param {●型●} name ●概要●
+'' @param {●型●} name ●概要●
+''
+'' @return {●型●} ●概要●
+''
+'Public Function To1d() As Variant
+'
+'    Dim maxIndex As Long: maxIndex = UBound(pArray, dimension(pArray))
+'
+'    Dim arr1d As Variant
+'    ReDim arr1d(maxIndex) '配列の初期化
+'
+'
+'
+'End Function
+
+''
+' 配列の次元数をログ出力する
+'
+' 【Excel VBA】配列の次元数を取得する関数コード | oki2a24  Just another oki2a24 ブロゴ
+' https://oki2a24.com/2016/03/09/get-dimension-number-in-excel-vba/
+'
+' @param {variant} 配列
+'
+' @return {long} 次元数
+'
+Private Property Get dimension(ByRef arr As Variant) As Long
+
+    Dim d As Long: d = 1
+
+    On Error Resume Next
+
+    '次元数を確認する
+    Dim tempLength As Long
+    Do Until Err.Number <> 0
+        tempLength = UBound(arr, d)
+        d = d + 1
+    Loop
+
+    '値を調整して返す
+    '（エラー発生時に次元 + 1 となっているので、2を引く）
+    dimension = d - 2
+
+End Property
+
 ''
 ' 要素
 '
 Public Property Get Elements(ByVal Index As Long) As Variant
-    Elements = pArray(Index)
+
+    On Error GoTo ErrorCatch
+    Dim e As Variant
+    Select Case dimension(pArray)
+        Case 1
+            e = pArray(Index)
+
+        Case 2
+            e = pArray(1, Index)
+
+        Case Else
+            GoTo ErrorCatch
+
+    End Select
+
+    Elements = e
+
+    Exit Property
+
+ErrorCatch:
+
+    MsgBox "配列の次元数が適切でないかもしれません。"
+
 End Property
 Public Property Let Elements(ByVal Index As Long, _
                              ByVal assginValue As Variant)

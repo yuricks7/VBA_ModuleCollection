@@ -105,7 +105,7 @@ Property Get Width(Optional ByVal aWidthType As eWidthType = eWidthType.[_eCount
         .Add eWidthType.eDateWithDayOfTheWeek,     14.38 '120px
         .Add eWidthType.eDateTimeWithDayOfTheWeek, 20.38 '168px
         .Add eWidthType.eMiddleSentence, 34.38           '280px
-        .Add eWidthType.eMax,            46.88                      '380px
+        .Add eWidthType.eMax,            46.88           '380px
 
     End With
 

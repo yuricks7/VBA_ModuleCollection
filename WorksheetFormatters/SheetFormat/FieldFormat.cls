@@ -172,7 +172,7 @@ Public Sub ApplyByHeader()
             Case right2 = "“úŽž"
                 .SetPropertiesForDateTime
 
-            Case right1 = "“ú"
+            Case (right1 = "“ú"), (right2 = "“ú•t")
                 .SetPropertiesForDate
 
             Case right2 = "ID"

@@ -39,9 +39,9 @@ End Enum
 
 '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ プロパティ（変数）
 
-Public Range As Range                  'フィールド範囲
-Public ValueType As eValueType         'フィールドの型
-Public WidthType As eWidthType         '列幅の種類
+Public Range      As Range                  'フィールド範囲
+Public ValueType  As eValueType         'フィールドの型
+Public WidthType  As eWidthType         '列幅の種類
 Public CanAutoFit As Boolean           '列幅の自動調整の可否
 Public HorizontalAlignment As XlHAlign '値の水平位置
 
@@ -51,7 +51,7 @@ Private Sub Class_Initialize()
 
     ValueType = eIdOrWords
 
-    WidthType = eOnlyWord
+    WidthType  = eOnlyWord
     CanAutoFit = False
 
     HorizontalAlignment = xlHAlignLeft
@@ -71,13 +71,13 @@ Property Get DisplayFormat(Optional ByVal aValueType As eValueType = eValueType.
 
     Dim fieldTypes As Dictionary: Set fieldTypes = New Dictionary
     With fieldTypes
-        .Add eValueType.eStandard, "G/標準"
+        .Add eValueType.eStandard,  "G/標準"
         .Add eValueType.eIdOrWords, "@"
-        .Add eValueType.eNumbers, "#,##0_ ;[赤]▼ #,##0 "
+        .Add eValueType.eNumbers,   "#,##0_ ;[赤]▼ #,##0 "
         .Add eValueType.eNumbers00, "00"
         .Add eValueType.eDatesOnly, "yyyy/mm/dd"
-        .Add eValueType.eDatesAndDaysOfTheWeek, "yyyy/mm/dd hh:mm"
-        .Add eValueType.eDateTime, "yyyy/mm/dd (aaa)"
+        .Add eValueType.eDatesAndDaysOfTheWeek,    "yyyy/mm/dd (aaa)"
+        .Add eValueType.eDateTime,  "yyyy/mm/dd hh:mm"
         .Add eValueType.eDateTimeAndDaysOfTheWeek, "yyyy/mm/dd (aaa) hh:mm"
     End With
 
@@ -97,15 +97,15 @@ Property Get Width(Optional ByVal aWidthType As eWidthType = eWidthType.[_eCount
 
     Dim widthDefinitions As Dictionary: Set widthDefinitions = New Dictionary
     With widthDefinitions
-        .Add eWidthType.eGridPaper, 2.88
-        .Add eWidthType.eMinutesAndHour, 3.88            ' 36px
-        .Add eWidthType.eBoolean, 6.88                   ' 60px
-        .Add eWidthType.eOnlyWord, 9.38                  ' 80px
-        .Add eWidthType.eNarrow, 14.38                   '120px
-        .Add eWidthType.eDateWithDayOfTheWeek, 14.38     '120px
+        .Add eWidthType.eGridPaper,       2.88
+        .Add eWidthType.eMinutesAndHour,  3.88           ' 36px
+        .Add eWidthType.eBoolean,         6.88           ' 60px
+        .Add eWidthType.eOnlyWord,        9.38           ' 80px
+        .Add eWidthType.eNarrow,         14.38           '120px
+        .Add eWidthType.eDateWithDayOfTheWeek,     14.38 '120px
         .Add eWidthType.eDateTimeWithDayOfTheWeek, 20.38 '168px
         .Add eWidthType.eMiddleSentence, 34.38           '280px
-        .Add eWidthType.eMax, 46.88                      '380px
+        .Add eWidthType.eMax,            46.88                      '380px
 
     End With
 
@@ -136,7 +136,7 @@ Public Sub Apply()
 
     With field
         .HorizontalAlignment = Me.HorizontalAlignment
-        .NumberFormatLocal = Me.DisplayFormat
+        .NumberFormatLocal   = Me.DisplayFormat
 
         .ColumnWidth = Me.Width
 
@@ -152,7 +152,7 @@ End Sub
 Public Sub ApplyByHeader()
 
     Dim headerString As String: headerString = Me.FieldName
-    Dim left2 As String:    left2 = Left(headerString, 2)
+    Dim left2 As String:   left2 =  Left(headerString, 2)
     Dim right1 As String: right1 = Right(headerString, 1)
     Dim right2 As String: right2 = Right(headerString, 2)
     Dim right3 As String: right3 = Right(headerString, 3)
@@ -165,6 +165,9 @@ Public Sub ApplyByHeader()
 
             Case (left2 = "M_"), (left2 = "分_")
                 .SetPropertiesForMinutes
+
+            Case (left2 = "is"), (left2 = "Is"), (right1 = "？"), (right1 = "?")
+                .SetPropertiesForBoolean
 
             Case right2 = "日時"
                 .SetPropertiesForDateTime
@@ -181,13 +184,11 @@ Public Sub ApplyByHeader()
             Case (right2 = "カテ"), (right4 = "カテゴリ")
                 .SetPropertiesForCategory
 
-            Case (left2 = "is"), (right1 = "？"), (right1 = "?")
-                .SetPropertiesForBoolean
-
             Case Else
-                .ValueType = eStandard
+                .ValueType = eNumbers
                 .WidthType = eMiddleSentence
-                .HorizontalAlignment = xlHAlignLeft
+                .CanAutoFit = True
+                .HorizontalAlignment = xlHAlignRight
 
         End Select
     End With
@@ -203,7 +204,17 @@ Public Sub SetPropertiesForId()
 
     With Me
         .ValueType = eIdOrWords
-        .WidthType = eOnlyWord
+
+        If Me.Range.Width > .Width(eOnlyWord) Then
+            .WidthType  = eNarrow
+            .CanAutoFit = True
+
+        Else
+            .WidthType  = eOnlyWord
+            .CanAutoFit = False
+
+        End If
+
         .HorizontalAlignment = xlHAlignCenter
     End With
 
@@ -215,9 +226,19 @@ End Sub
 Public Sub SetPropertiesForRecordNumber()
 
     With Me
+
         .ValueType = eNumbers
-        .WidthType = eOnlyWord
-        .CanAutoFit = True
+
+        If Me.Range.Width > .Width(eOnlyWord) Then
+            .WidthType  = eNarrow
+            .CanAutoFit = True
+
+        Else
+            .WidthType  = eOnlyWord
+            .CanAutoFit = False
+
+        End If
+
         .HorizontalAlignment = xlHAlignRight
     End With
 

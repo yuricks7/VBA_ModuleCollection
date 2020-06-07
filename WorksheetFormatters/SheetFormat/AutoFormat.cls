@@ -13,7 +13,7 @@ Option Explicit
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
 
 Private pFont As String
-Private pFontSize As Long
+Private pFontSize       As Long
 Private pHeaderFontSize As Long
 
 Private pVerticalAlignment As Long
@@ -27,21 +27,21 @@ Private pRowHeight As Double
 Property Get Font() As String
 
     pFont = "Meiryo UI"
-    Font = pFont
+     Font = pFont
 
 End Property
 
 Property Get FontSize() As Long
 
     pFontSize = 8
-    FontSize = pFontSize
+     FontSize = pFontSize
 
 End Property
 
 Property Get HeaderFontSize() As Long
 
     pHeaderFontSize = 9
-    HeaderFontSize = pHeaderFontSize
+     HeaderFontSize = pHeaderFontSize
 
 End Property
 
@@ -51,7 +51,7 @@ End Property
 Property Get VerticalAlignment() As Long
 
     pVerticalAlignment = xlBottom
-    VerticalAlignment = pVerticalAlignment
+     VerticalAlignment = pVerticalAlignment
 
 End Property
 
@@ -59,7 +59,7 @@ Property Let VerticalAlignment(ByVal aVerticalAlignment As Long)
 
     '既定値の使い方あってる…？
     If IsEmpty(aVerticalAlignment) Then aVerticalAlignment = xlBottom
-    pVerticalAlignment = aVerticalAlignment
+     pVerticalAlignment = aVerticalAlignment
 
 End Property
 
@@ -69,7 +69,7 @@ End Property
 Property Get RowHeight() As Double
 
     pRowHeight = 14.4 '24px
-    RowHeight = pRowHeight
+     RowHeight = pRowHeight
 
 End Property
 
@@ -91,7 +91,7 @@ Public Sub SetExcelFont(ByRef targetBook As Workbook)
 
     'Excelアプリケーション自体のフォントを変更
     With Application
-        .StandardFont = strFontName
+        .StandardFont     = strFontName
         .StandardFontSize = numFontSize
     End With
 
@@ -136,7 +136,7 @@ End Sub
 '
 Public Sub Apply(ByRef targetSheet As Worksheet)
 
-    Dim targetBook As Workbook: Set targetBook = targetSheet.Parent
+    Dim targetBook As Workbook:    Set targetBook  = targetSheet.Parent
     If targetSheet Is Nothing Then Set targetSheet = targetBook.Worksheets(1)
 
     Const NEW_STYLE_NAME As String = "lightBlueBackStyle"
@@ -169,7 +169,7 @@ Public Sub Apply(ByRef targetSheet As Worksheet)
                                 Prompt:="シート名を入力してください。", _
                                 Title:="シート名確認中…", _
                                 Default:="data" _
-                            )
+                          )
                 .Name = newName
             Else
                 newName = .Name
@@ -340,7 +340,7 @@ Private Sub setHeaderStyle(ByRef tableStyleObj As TableStyle, _
 
         With .Font
             .Color = fontColor
-            .Bold = isBold
+            .Bold  = isBold
         End With
 
     End With
@@ -355,17 +355,17 @@ End Sub
 Public Sub SetQueryProperties(ByRef targetList As ListObject)
 
     With targetList.QueryTable
-        .RowNumbers = False           '行番号
+        .RowNumbers           = False '行番号
         .FillAdjacentFormulas = False 'クエリ テーブルの右側の数式を自動的に更新
-        .PreserveFormatting = True    '書式を保持する
-        .RefreshOnFileOpen = False    'ファイルを開いたら更新する
-        .BackgroundQuery = True       'バックグラウンドで更新の許可
-        .RefreshStyle = xlInsertDeleteCells '新しいレコードセットと行数を正確に一致させる
-        .SavePassword = False         'ODBC接続文字列のパスワード情報を保存
-        .SaveData = True              'ピボットテーブル・レポートの定義とデータを保存
-        .AdjustColumnWidth = False    '列幅を自動調整
-        .RefreshPeriod = 0            'クエリ・テーブルを自動更新する間隔
-        .PreserveColumnInfo = True    'クエリ・テーブルが更新されるごとに、
+        .PreserveFormatting   = True  '書式を保持する
+        .RefreshOnFileOpen    = False 'ファイルを開いたら更新する
+        .BackgroundQuery      = True  'バックグラウンドで更新の許可
+        .RefreshStyle         = xlInsertDeleteCells '新しいレコードセットと行数を正確に一致させる
+        .SavePassword         = False 'ODBC接続文字列のパスワード情報を保存
+        .SaveData             = True  'ピボットテーブル・レポートの定義とデータを保存
+        .AdjustColumnWidth    = False '列幅を自動調整
+        .RefreshPeriod        = 0     'クエリ・テーブルを自動更新する間隔
+        .PreserveColumnInfo   = True  'クエリ・テーブルが更新されるごとに、
         '列の並べ替え､フィルター設定､レイアウトに関する情報を保存
     End With
 
@@ -460,7 +460,7 @@ Public Sub SetColorFormula(ByRef targetRow As Range)
         .FormatConditions(.FormatConditions.Count).SetFirstPriority
         With targetRow.FormatConditions(1)
             With .Font
-                .Bold = True
+                .Bold  = True
                 .Color = RGB(0, 0, 0) '黒
             End With
 

@@ -5,9 +5,9 @@ END
 Attribute VB_Name            = "AutoFormat"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
-Attribute VB_PredeclaredId   = False
+Attribute VB_PredeclaredId   = True
 Attribute VB_Exposed         = False
-Attribute VB_Description     = "Excelのワークシートを整形します。"
+Attribute VB_Description     = "ワークシートの見た目を調整します。"
 Option Explicit
 
 '━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -18,27 +18,6 @@ Private pHeaderFontSize As Long
 
 Private pVerticalAlignment As Long
 Private pRowHeight As Double
-
-Private pHorizontalAlignment As Long
-Private pColumnWidth_MAX As Double
-Private pColumnWidth_MIDDLE As Double
-Private pColumnWidth_NARROW As Double
-
-Private pColumnWidth_GridPaper As Double
-Private pColumnWidth_MinutesAndHour As Double
-Private pColumnWidth_Date_WithDayOfTheWeek As Double
-Private pColumnWidth_DateTime_WithDayOfTheWeek As Double
-Private pColumnWidth_Boolean As Double
-
-Private pTypeOfStandard As String
-Private pTypeOfString As String
-Private pTypeOfNumbers As String
-Private pTypeOfNumbers00 As String
-
-Private pTypeOfDate As String
-Private pTypeOfDateTime As String
-Private pTypeOfDate_WithDayOfTheWeek As String
-Private pTypeOfDateTime_WithDayOfTheWeek As String
 
 '━━━━━━━━━━━ プロパティ ━━━━━━━━━━━
 
@@ -91,145 +70,6 @@ Property Get RowHeight() As Double
 
     pRowHeight = 14.4 '24px
     RowHeight = pRowHeight
-
-End Property
-
-''
-' 標準の水平位置
-'
-Property Get HorizontalAlignment() As Long
-
-    pHorizontalAlignment = xlRight
-    HorizontalAlignment = pHorizontalAlignment
-
-End Property
-
-Property Let HorizontalAlignment(ByVal aHorizontalAlignment As Long)
-
-    '既定値の使い方あってる…？
-    If IsEmpty(aHorizontalAlignment) Then aHorizontalAlignment = xlBottom
-    pHorizontalAlignment = aHorizontalAlignment
-
-End Property
-
-''
-' 列幅
-'
-Property Get ColumnWidth_MAX() As Double
-
-    pColumnWidth_MAX = 46.88 '380px
-    ColumnWidth_MAX = pColumnWidth_MAX
-
-End Property
-
-Property Get ColumnWidth_MIDDLE() As Double
-
-    pColumnWidth_MIDDLE = 34.38 '280px
-    ColumnWidth_MIDDLE = pColumnWidth_MIDDLE
-
-End Property
-
-Property Get ColumnWidth_NARROW() As Double
-
-    pColumnWidth_NARROW = 14.38 '120px
-    ColumnWidth_NARROW = pColumnWidth_NARROW
-
-End Property
-
-'Excel方眼紙
-Property Get ColumnWidth_GridPaper() As Double
-
-    pColumnWidth_GridPaper = 2.88 '28px
-    ColumnWidth_GridPaper = pColumnWidth_GridPaper
-
-End Property
-
-'H列、M列
-Property Get ColumnWidth_MinutesAndHour() As Double
-
-    pColumnWidth_MinutesAndHour = 3.88 '36px
-    ColumnWidth_MinutesAndHour = pColumnWidth_MinutesAndHour
-
-End Property
-
-Property Get ColumnWidth_Date_WithDayOfTheWeek() As Double
-
-    pColumnWidth_Date_WithDayOfTheWeek = 14.38 '120px
-    ColumnWidth_Date_WithDayOfTheWeek = pColumnWidth_Date_WithDayOfTheWeek
-
-End Property
-
-Property Get ColumnWidth_DateTime_WithDayOfTheWeek() As Double
-
-    pColumnWidth_DateTime_WithDayOfTheWeek = 20.38 '168px
-    ColumnWidth_DateTime_WithDayOfTheWeek = pColumnWidth_DateTime_WithDayOfTheWeek
-
-End Property
-
-'True / False
-Property Get ColumnWidth_Boolean() As Double
-
-    pColumnWidth_Boolean = 6.88 '60px
-    ColumnWidth_Boolean = pColumnWidth_Boolean
-
-End Property
-
-''
-' セルの表示形式
-'
-Property Get TypeOfStandard() As String
-
-    pTypeOfStandard = "G/標準"
-    TypeOfStandard = pTypeOfStandard
-
-End Property
-
-Property Get TypeOfString() As String
-
-    pTypeOfString = "@"
-    TypeOfString = pTypeOfString
-
-End Property
-
-Property Get TypeOfNumbers() As String
-
-    pTypeOfNumbers = "#,##0_ ;[赤]▼ #,##0 "
-    TypeOfNumbers = pTypeOfNumbers
-
-End Property
-
-Property Get TypeOfNumbers00() As String
-
-    pTypeOfNumbers00 = "00"
-    TypeOfNumbers00 = pTypeOfNumbers00
-
-End Property
-
-Property Get TypeOfDate() As String
-
-    pTypeOfDate = "yyyy/mm/dd"
-    TypeOfDate = pTypeOfDate
-
-End Property
-
-Property Get TypeOfDateTime() As String
-
-    pTypeOfDateTime = "yyyy/mm/dd hh:mm"
-    TypeOfDateTime = pTypeOfDateTime
-
-End Property
-
-Property Get TypeOfDate_WithDayOfTheWeek() As String
-
-    pTypeOfDate_WithDayOfTheWeek = "yyyy/mm/dd (aaa)"
-    TypeOfDate_WithDayOfTheWeek = pTypeOfDate_WithDayOfTheWeek
-
-End Property
-
-Property Get TypeOfDateTime_WithDayOfTheWeek() As String
-
-    pTypeOfDateTime_WithDayOfTheWeek = "yyyy/mm/dd (aaa) hh:mm"
-    TypeOfDateTime_WithDayOfTheWeek = pTypeOfDateTime_WithDayOfTheWeek
 
 End Property
 
@@ -307,7 +147,7 @@ Public Sub Apply(ByRef targetSheet As Worksheet)
             Set targetList = .ListObjects(1)
         On Error GoTo 0
 
-        'スタイルを変更（2回目はエラーになるような？）
+        'スタイルを変更（2回目はエラー？）
         On Error GoTo CreateStyle
         targetList.TableStyle = NEW_STYLE_NAME
         On Error GoTo 0
@@ -320,10 +160,29 @@ Public Sub Apply(ByRef targetSheet As Worksheet)
             Call SetQueryProperties(targetList)
         End If
 
-        'シート名をテーブル名と同期
-        On Error Resume Next 'エラーならデフォルトのまま
-        targetSheet.Name = targetList.Name
-        On Error GoTo 0
+        'シート名を変更
+        With targetList
+
+            Dim newName As String
+            If isDefalutName(.Name) Then
+                newName = Application.InputBox( _
+                                Prompt:="シート名を入力してください。", _
+                                Title:="シート名確認中…", _
+                                Default:="data" _
+                            )
+                .Name = newName
+            Else
+                newName = .Name
+
+            End If
+
+            On Error Resume Next
+            targetSheet.Name = newName
+            On Error GoTo 0
+
+        End With
+
+Named:
     End With
 
     '▼後始末
@@ -523,6 +382,9 @@ Public Sub SetSheetStyle(ByRef targetSheet As Worksheet)
         Dim navyBlue As Long: navyBlue = RGB(0, 32, 96)
         .Tab.Color = navyBlue
 
+        '設定値の取得に使用
+        Dim myFormat As FieldFormat: Set myFormat = New FieldFormat
+
         '全体の設定
         With .Cells
             With .Font
@@ -532,7 +394,7 @@ Public Sub SetSheetStyle(ByRef targetSheet As Worksheet)
 
             .RowHeight = Me.RowHeight
             .VerticalAlignment = Me.VerticalAlignment
-            .NumberFormatLocal = Me.TypeOfNumbers
+            .NumberFormatLocal = myFormat.DisplayFormat(eNumbers)
         End With
 
         'ヘッダーの設定
@@ -542,7 +404,7 @@ Public Sub SetSheetStyle(ByRef targetSheet As Worksheet)
 
         '列幅の設定
         With .Columns
-            .ColumnWidth = Me.ColumnWidth_GridPaper
+            .ColumnWidth = myFormat.Width(eGridPaper)
             .AutoFit
         End With
 
@@ -566,155 +428,21 @@ End Sub
 '
 Public Sub SetColumnStyles(ByRef targetSheet As Worksheet)
 
-    '列の設定
-    With targetSheet
-        Dim i As Long
-        For i = 1 To .Columns.Count
-            With .Columns(i)
-                If .Cells(1, 1).Value = "" Then Exit Sub
+    Dim sheetColumns As Range: Set sheetColumns = targetSheet.Columns
 
-                '列名を見て列の設定を行う
-                Dim isApplied As Boolean
-                isApplied = applyColumnSettingsByHeader(.Columns(i))
+    '1列ごとに設定を適用する
+    Dim i As Long
+    For i = 1 To sheetColumns.Count
+        With sheetColumns(i)
+            If .Cells(1, 1).Value = "" Then Exit Sub
 
-                'その他
-                If isApplied = False Then Call setColumnWidth(.Columns(i))
+            '列名を見て列の設定を行う
+            Dim fFormat As FieldFormat: Set fFormat = New FieldFormat
+            Set fFormat.Range = sheetColumns(i)
+            fFormat.ApplyByHeader
 
-            End With
-        Next i
-    End With
-
-End Sub
-
-''
-' 列の設定値を適用
-'
-' @param {Range} targetColumn 適用先
-'
-Private Function applyColumnSettingsByHeader(ByRef targetColumn As Range) As Boolean
-
-    Dim headerString As String
-    headerString = targetColumn.Cells(1, 1).Value
-
-    Dim left2 As String:   left2 = Left(headerString, 2)
-    Dim right1 As String: right1 = Right(headerString, 1)
-    Dim right2 As String: right2 = Right(headerString, 2)
-    Dim right3 As String: right3 = Right(headerString, 3)
-    Dim right4 As String: right4 = Right(headerString, 4)
-
-    With Me
-        '時刻（H列、M列）
-        Select Case left2
-            Case "H_", "時_"
-                Call applyColumnSettings(targetColumn, xlRight, .TypeOfNumbers, .ColumnWidth_MinutesAndHour)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            Case "M_", "分_"
-                Call applyColumnSettings(targetColumn, xlLeft, .TypeOfNumbers00, .ColumnWidth_MinutesAndHour)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-        End Select
-
-        Select Case True '早期リターン
-            '日時
-            Case right2 = "日時"
-                Call applyColumnSettings(targetColumn, xlCenter, .TypeOfDateTime_WithDayOfTheWeek, .ColumnWidth_DateTime_WithDayOfTheWeek)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            Case right1 = "日"
-                Call applyColumnSettings(targetColumn, xlCenter, .TypeOfDate_WithDayOfTheWeek, .ColumnWidth_Date_WithDayOfTheWeek)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            'ID
-            Case right2 = "ID"
-                Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, canAutofit:=True)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            'No
-            Case (right2 = "No"), (right3 = "No.")
-                Call applyColumnSettings(targetColumn, xlRight, .TypeOfNumbers, canAutofit:=True)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            'カテゴリ
-            Case (right2 = "カテ"), (right4 = "カテゴリ")
-                Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, canAutofit:=True)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-            'True/False
-            Case (left2 = "is"), (right1 = "？"), (right1 = "?")
-                Call applyColumnSettings(targetColumn, xlCenter, .TypeOfStandard, .ColumnWidth_Boolean)
-                applyColumnSettingsByHeader = True
-                Exit Function
-
-        End Select
-
-    End With
-
-End Function
-
-''
-' 列の設定を適用する
-'
-' @param {Range}   targetColumn         該当列
-' @param {Long}    aHorizontalAlignment 値の水平位置
-' @param {String}  aNumberFormatLocal   値の書式
-' @param {Long}    aColumnWidth         列幅
-' @param {Boolean} canAutofit           幅を自動調整してよいか
-'
-Private Sub applyColumnSettings(ByRef targetColumn As Range, _
-                                Optional ByVal aHorizontalAlignment As Long = xlRight, _
-                                Optional ByVal aNumberFormatLocal As String, _
-                                Optional ByVal aColumnWidth As Long, _
-                                Optional ByVal canAutofit As Boolean = False)
-
-    With targetColumn
-        .HorizontalAlignment = aHorizontalAlignment
-
-        If aNumberFormatLocal = "" Then aNumberFormatLocal = Me.TypeOfStandard
-        .NumberFormatLocal = aNumberFormatLocal
-
-        If canAutofit = False Then
-            If IsEmpty(aColumnWidth) Then aColumnWidth = Me.ColumnWidth_NARROW
-            .ColumnWidth = aColumnWidth
-
-        Else
-            .AutoFit
-
-        End If
-
-    End With
-
-End Sub
-
-''
-' 列を既定の幅に調える
-'
-' @param {Range} targetColumn 幅を変える列
-'
-Private Sub setColumnWidth(ByRef targetColumn As Range)
-
-    With targetColumn
-
-        Select Case .ColumnWidth
-            Case Is > Me.ColumnWidth_MAX
-                .ColumnWidth = Me.ColumnWidth_MAX
-
-            Case Is > Me.ColumnWidth_MIDDLE
-                .ColumnWidth = Me.ColumnWidth_MIDDLE
-
-            Case Is > Me.ColumnWidth_MIDDLE
-                .ColumnWidth = Me.ColumnWidth_NARROW
-
-        End Select
-
-    End With
+        End With
+    Next i
 
 End Sub
 
@@ -743,3 +471,19 @@ Public Sub SetColorFormula(ByRef targetRow As Range)
     End With
 
 End Sub
+
+''
+' テーブル名がデフォルト値のままか確認する
+'
+' @param {String} tableName テーブル名
+'
+' @return {Boolean} テーブル名が「テーブル～」であるか
+'
+Private Function isDefalutName(ByVal tableName As String) As Boolean
+
+    Dim ret As Boolean: ret = False
+    If tableName Like "テーブル" & "*" Then ret = True
+
+    isDefalutName = ret
+
+End Function

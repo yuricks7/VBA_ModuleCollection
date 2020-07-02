@@ -29,15 +29,13 @@ Private pMessage As String
 '━━━━━━━━ プロパティ ━━━━━━━━━
 
 Public Property Get Apps() As Application
-Attribute Message.VB_Description _
-= "ステータスバーで使用するApplicationオブジェクト"
+Attribute Apps.VB_Description = "ステータスバーで使用するApplicationオブジェクト"
 
     Set Apps = pApps
 
 End Property
 Public Property Set Apps(ByVal aApps As Application)
-Attribute Message.VB_Description _
-= "ステータスバーで使用するApplicationオブジェクト"
+Attribute Apps.VB_Description = "ステータスバーで使用するApplicationオブジェクト"
 
     Set pApps = aApps
 
@@ -145,8 +143,7 @@ Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
                                       ByVal totalCounts As Long, _
                                       Optional ByVal description As String _
                                                      = "出力")
-Attribute ShowProgressWithPercentage.VB_Description _
- = "ステータスバーに進捗を表示する" _
+Attribute ShowProgressWithPercentage.VB_Description = "ステータスバーに進捗を表示する" _
 
     With Me
         'グラフ表示用
@@ -184,8 +181,7 @@ Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
                                    Optional ByVal units As String = "件", _
                                    Optional ByVal description As String _
                                                   = "出力")
-Attribute ShowProgressWithNumbers.VB_Description _
-= "ステータスバーに進捗を表示する"
+Attribute ShowProgressWithNumbers.VB_Description = "ステータスバーに進捗を表示する"
 
     With Me
 
@@ -218,8 +214,7 @@ Public Sub ShowWaitingAnime(ByVal currentCounts As Long, _
                             Optional ByVal msg As String _
                                            = "データを解析しています", _
                             Optional ByVal divisor As Long = 1000)
-Attribute ShowWaitingAnime.VB_Description _
-= "ステータスバーにアニメーションを表示する"
+Attribute ShowWaitingAnime.VB_Description = "ステータスバーにアニメーションを表示する"
 
     With Me
         'アニメーション風

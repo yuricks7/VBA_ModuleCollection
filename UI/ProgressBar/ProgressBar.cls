@@ -5,9 +5,9 @@ END
 Attribute VB_Name            = "ProgressBar"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
-Attribute VB_PredeclaredId   = False
+Attribute VB_PredeclaredId   = true
 Attribute VB_Exposed         = False
-Attribute VB_Description     = "マクロの進捗等、ステータスバーの表示を制御します。"
+Attribute VB_Description     = "ステータスバーを制御してマクロの進捗等を表示します。"
 Option Explicit
 
 '━━━━━━━━ モジュールレベル変数 ━━━━━━━━━
@@ -24,16 +24,50 @@ Option Explicit
 
 'モジュールレベル変数
 Private pApps As Application
+Private pMessage As String
 
 '━━━━━━━━ プロパティ ━━━━━━━━━
 
-Public Property Get Apps() As Application:             Set Apps = pApps: End Property
-Public Property Set Apps(ByVal aApps As Application): Set pApps = aApps: End Property
+Public Property Get Apps() As Application
+Attribute Message.VB_Description _
+= "ステータスバーで使用するApplicationオブジェクト"
+
+    Set Apps = pApps
+
+End Property
+Public Property Set Apps(ByVal aApps As Application)
+Attribute Message.VB_Description _
+= "ステータスバーで使用するApplicationオブジェクト"
+
+    Set pApps = aApps
+
+End Property
+
+''
+' デフォルトで表示する文字列
+'
+Public Property Get Message() As String
+Attribute Message.VB_Description = "デフォルトで表示する文字列"
+Attribute Message.VB_UserMemId   = 0
+
+    Message = pMessage
+
+End Property
+Public Property Let Message(ByVal msg As String)
+Attribute Message.VB_Description = "デフォルトで表示する文字列"
+Attribute Message.VB_UserMemId   = 0
+
+    pMessage = msg
+
+End Property
 
 '━━━━━━━━ コンストラクタ等 ━━━━━━━━━
 
-'初期化処理
+''
+' 初期化処理
+'
 Private Sub Class_Initialize()
+Attribute Class_Initialize.VB_Description = "クラスの初期化"
 
     Set pApps = Application
 
@@ -41,11 +75,14 @@ Private Sub Class_Initialize()
 
 End Sub
 
-'終了時処理
+''
+' 終了時処理
+'
 Private Sub Class_Terminate()
+Attribute Class_Terminate.VB_Description = "クラスの後始末"
+
 '    使うときは先に表示する
 '    Debug.Print "The Terminate for 'IpTool' is called."
-
 
 End Sub
 
@@ -56,7 +93,10 @@ End Sub
 '
 ' @param {String} msg 表示する文字列
 '
-Public Sub Flash(ByVal msg As String)
+Public Sub Flash(Optional ByVal msg As String)
+Attribute Flash.VB_Description = "ステータスバーにメッセージを点滅させる"
+
+    If msg = "" Then msg = pMessage
 
     With pApps
         .StatusBar = False
@@ -70,7 +110,10 @@ End Sub
 '
 ' @param {String} msg 表示する文字列
 '
-Public Sub ShowMessage(ByVal msg As String)
+Public Sub Display(Optional ByVal msg As String)
+Attribute Display.VB_Description = "ステータスバーにメッセージを表示する"
+
+    If msg = "" Then msg = pMessage
 
     pApps.StatusBar = msg
 
@@ -80,6 +123,7 @@ End Sub
 ' ステータスバーの表示を解除する
 '
 Public Sub Clear()
+Attribute Clear.VB_Description = "ステータスバーの表示を解除する"
 
     pApps.StatusBar = False
 
@@ -99,7 +143,10 @@ End Sub
 '
 Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
                                       ByVal totalCounts As Long, _
-                                      Optional ByVal description As String = "出力")
+                                      Optional ByVal description As String _
+                                                     = "出力")
+Attribute ShowProgressWithPercentage.VB_Description _
+ = "ステータスバーに進捗を表示する" _
 
     With Me
         'グラフ表示用
@@ -115,7 +162,7 @@ Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
         m = m & " " & Left(currentSymbols, MAX_COUNTS)
         m = m & " " & Format(currentCounts / totalCounts, "0 %")
 
-        Apps.StatusBar = m
+        .Display m
     End With
 
 End Sub
@@ -135,7 +182,10 @@ End Sub
 Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
                                    ByVal totalCounts As Long, _
                                    Optional ByVal units As String = "件", _
-                                   Optional ByVal description As String = "出力")
+                                   Optional ByVal description As String _
+                                                  = "出力")
+Attribute ShowProgressWithNumbers.VB_Description _
+= "ステータスバーに進捗を表示する"
 
     With Me
 
@@ -153,7 +203,7 @@ Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
         m = m & " " & Format(currentCounts, "#,##0") & " " & units
         m = m & " / " & Format(totalCounts, "#,##0") & " " & units
 
-        Apps.StatusBar = m
+        .Display m
     End With
 
 End Sub
@@ -165,8 +215,11 @@ End Sub
 ' @param {Long} divisor       除数
 '
 Public Sub ShowWaitingAnime(ByVal currentCounts As Long, _
-                            Optional ByVal msg As String = "データを解析しています", _
+                            Optional ByVal msg As String _
+                                           = "データを解析しています", _
                             Optional ByVal divisor As Long = 1000)
+Attribute ShowWaitingAnime.VB_Description _
+= "ステータスバーにアニメーションを表示する"
 
     With Me
         'アニメーション風
@@ -183,9 +236,7 @@ Public Sub ShowWaitingAnime(ByVal currentCounts As Long, _
                 dotMark = "..."
         End Select
 
-        With pApps
-            .StatusBar = msg & dotMark
-        End With
+        .Display m
     End With
 
 End Sub

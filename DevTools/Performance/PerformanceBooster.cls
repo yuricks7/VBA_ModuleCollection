@@ -17,7 +17,7 @@ Private pApps As Application
 '━━━━━━━━ プロパティ ━━━━━━━━━
 
 Property Get Apps() As Application
-Attribute Apps.VB_Description _= "このクラスで使用するApplicationオブジェクト"
+Attribute Apps.VB_Description = "このクラスで使用するApplicationオブジェクト"
 
     Set Apps = pApps
 

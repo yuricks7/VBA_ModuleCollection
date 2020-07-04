@@ -15,8 +15,7 @@ Most of the Modules are On Edit so that they are NOT guaranteed. If ok, feel fre
 
 ## LICENSE
 
-- MITライセンスで作成しております。<br>
-  詳細は、<b>[こちら](./LICENSE)</b>をご参照ください。
+- MITライセンスで作成しております。詳細は、<b>[こちら](./LICENSE)</b>をご参照ください。
 
   **[ENG]** It is on MIT License. Please Refer to **[here](./LICENSE)**.
 
@@ -28,6 +27,6 @@ Most of the Modules are On Edit so that they are NOT guaranteed. If ok, feel fre
 
 原則として下記のガイドラインを基準とします。
 
-- [【VBA】自分用コーディングガイドライン - ゆるおたノート](https://www.yuru-wota.com/entry/VBA/My-Coding-Guideline)
+**[ENG]** As a general rule, the guidelines below is the coding standard (and not a forced rule).
 
-**[ENG]** As a general rule, the above guidelines is the coding standard (and not a forced rule).
+- [【VBA】自分用コーディングガイドライン - ゆるおたノート](https://www.yuru-wota.com/entry/VBA/My-Coding-Guideline)

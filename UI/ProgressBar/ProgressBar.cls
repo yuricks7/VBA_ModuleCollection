@@ -5,7 +5,7 @@ END
 Attribute VB_Name            = "ProgressBar"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable       = False
-Attribute VB_PredeclaredId   = true
+Attribute VB_PredeclaredId   = True
 Attribute VB_Exposed         = False
 Attribute VB_Description     = "ステータスバーを制御してマクロの進捗等を表示します。"
 Option Explicit
@@ -34,7 +34,7 @@ Attribute Apps.VB_Description = "ステータスバーで使用するApplicationオブジェクト
     Set Apps = pApps
 
 End Property
-Public Property Set Apps(ByVal aApps As Application)
+Public Property Set Apps(ByRef aApps As Application)
 Attribute Apps.VB_Description = "ステータスバーで使用するApplicationオブジェクト"
 
     Set pApps = aApps
@@ -46,14 +46,14 @@ End Property
 '
 Public Property Get Message() As String
 Attribute Message.VB_Description = "デフォルトで表示する文字列"
-Attribute Message.VB_UserMemId   = 0
+Attribute Message.VB_UserMemId = 0
 
     Message = pMessage
 
 End Property
 Public Property Let Message(ByVal msg As String)
 Attribute Message.VB_Description = "デフォルトで表示する文字列"
-Attribute Message.VB_UserMemId   = 0
+Attribute Message.VB_UserMemId = 0
 
     pMessage = msg
 
@@ -91,14 +91,18 @@ End Sub
 '
 ' @param {String} msg 表示する文字列
 '
-Public Sub Flash(Optional ByVal msg As String)
-Attribute Flash.VB_Description = "ステータスバーにメッセージを点滅させる"
+Public Sub Flash(Optional ByVal msg As String, _
+                 Optional ByVal canResumeScreen As Boolean = False)
 
     If msg = "" Then msg = pMessage
 
     With pApps
+        .ScreenUpdating = True
+
         .StatusBar = False
         .StatusBar = msg
+
+        .ScreenUpdating = canResumeScreen
     End With
 
 End Sub
@@ -108,12 +112,18 @@ End Sub
 '
 ' @param {String} msg 表示する文字列
 '
-Public Sub Display(Optional ByVal msg As String)
-Attribute Display.VB_Description = "ステータスバーにメッセージを表示する"
+Public Sub Display(Optional ByVal msg As String, _
+                   Optional ByVal canResumeScreen As Boolean = False)
 
     If msg = "" Then msg = pMessage
 
-    pApps.StatusBar = msg
+    With pApps
+        .ScreenUpdating = True
+
+        .StatusBar = msg
+
+        .ScreenUpdating = canResumeScreen
+    End With
 
 End Sub
 
@@ -143,8 +153,7 @@ Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
                                       ByVal totalCounts As Long, _
                                       Optional ByVal description As String _
                                                      = "出力")
-Attribute ShowProgressWithPercentage.VB_Description = "ステータスバーに進捗を表示する" _
-
+Attribute ShowProgressWithPercentage.VB_Description = "ステータスバーに進捗を表示する"
     With Me
         'グラフ表示用
         Dim currentSymbols As String

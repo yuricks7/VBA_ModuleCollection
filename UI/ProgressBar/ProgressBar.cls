@@ -4,7 +4,7 @@ BEGIN
 END
 Attribute VB_Name            = "ProgressBar"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable       = False
+Attribute VB_Creatable = False
 Attribute VB_PredeclaredId   = True
 Attribute VB_Exposed         = False
 Attribute VB_Description     = "ƒXƒe[ƒ^ƒXƒo[‚ð§Œä‚µ‚Äƒ}ƒNƒ‚Ìi’»“™‚ð•\Ž¦‚µ‚Ü‚·B"
@@ -138,7 +138,7 @@ Attribute Clear.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚Ì•\Ž¦‚ð‰ðœ‚·‚é"
 End Sub
 
 ''
-' ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž¦‚·‚é
+' i’»‚ðƒp[ƒZƒ“ƒe[ƒW‚Å•\Œ»‚·‚é
 '
 ' yŽQlz
 ' Excel VBA ŽžŠÔ‚Ì‚©‚©‚éƒ}ƒNƒ‚Ìi’»ó‹µ‚ð•\Ž¦‚·‚é | MyRecord
@@ -149,11 +149,15 @@ End Sub
 ' @param {String} units         ’PˆÊ•\‹L
 ' @param {String} description   ˆ—“à—e
 '
-Public Sub ShowProgressWithPercentage(ByVal currentCounts As Long, _
-                                      ByVal totalCounts As Long, _
-                                      Optional ByVal description As String _
-                                                     = "o—Í")
-Attribute ShowProgressWithPercentage.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž¦‚·‚é"
+' @return {String} Œ»Ý‚Ìi’»
+'
+Public Property Get GraphWithPercentage(ByVal currentCounts As Long, _
+                                        ByVal totalCounts As Long, _
+                                        Optional ByVal description As String _
+                                                       = "o—Í" _
+                                        ) As String
+Attribute GraphWithPercentage.VB_Description = "i’»‚ðƒp[ƒZƒ“ƒe[ƒW‚Å•\Œ»‚·‚é"
+
     With Me
         'ƒOƒ‰ƒt•\Ž¦—p
         Dim currentSymbols As String
@@ -167,14 +171,14 @@ Attribute ShowProgressWithPercentage.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž
         m = description & "’†..."
         m = m & " " & Left(currentSymbols, MAX_COUNTS)
         m = m & " " & Format(currentCounts / totalCounts, "0 %")
-
-        .Display m
     End With
 
-End Sub
+    GraphWithPercentage = m
+
+End Property
 
 ''
-' ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž¦‚·‚é
+' i’»‚ðŒ”‚Å•\Œ»‚·‚é
 '
 ' yŽQlz
 ' Excel VBA ŽžŠÔ‚Ì‚©‚©‚éƒ}ƒNƒ‚Ìi’»ó‹µ‚ð•\Ž¦‚·‚é | MyRecord
@@ -185,15 +189,17 @@ End Sub
 ' @param {String} units         ’PˆÊ•\‹L
 ' @param {String} description   ˆ—“à—e
 '
-Public Sub ShowProgressWithNumbers(ByVal currentCounts As Long, _
-                                   ByVal totalCounts As Long, _
-                                   Optional ByVal units As String = "Œ", _
-                                   Optional ByVal description As String _
-                                                  = "o—Í")
-Attribute ShowProgressWithNumbers.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž¦‚·‚é"
+' @return {String} Œ»Ý‚Ìi’»
+'
+Public Property Get GraphWithCounts(ByVal currentCounts As Long, _
+                                    ByVal totalCounts As Long, _
+                                    Optional ByVal units As String = "Œ", _
+                                    Optional ByVal description As String _
+                                                   = "o—Í" _
+                                    ) As String
+Attribute GraphWithCounts.VB_Description = "i’»‚ðŒ”‚Å•\Œ»‚·‚é"
 
     With Me
-
         'ƒOƒ‰ƒt•\Ž¦—p
         Dim currentSymbols As String
         Const MAX_COUNTS As Long = 10
@@ -207,26 +213,33 @@ Attribute ShowProgressWithNumbers.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚Éi’»‚ð•\Ž¦‚·
         m = m & " " & Left(currentSymbols, MAX_COUNTS)
         m = m & " " & Format(currentCounts, "#,##0") & " " & units
         m = m & " / " & Format(totalCounts, "#,##0") & " " & units
-
-        .Display m
     End With
 
-End Sub
+    GraphWithCounts = m
 
+End Property
+
+''
+' ƒXƒe[ƒ^ƒXƒo[‚É•\Ž¦‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“
+'
+' @param {Long} currentCounts Œ»Ý‚ÌŒ”
+' @param {Long} divisor       œ”
+'
 ''
 ' ƒXƒe[ƒ^ƒXƒo[‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ð•\Ž¦‚·‚é
 '
 ' @param {Long} currentCounts Œ»Ý‚ÌŒ”
 ' @param {Long} divisor       œ”
 '
-Public Sub ShowWaitingAnime(ByVal currentCounts As Long, _
-                            Optional ByVal msg As String _
-                                           = "ƒf[ƒ^‚ð‰ðÍ‚µ‚Ä‚¢‚Ü‚·", _
-                            Optional ByVal divisor As Long = 1000)
-Attribute ShowWaitingAnime.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ð•\Ž¦‚·‚é"
+Public Property Get Animation(ByVal currentCounts As Long, _
+                              Optional ByVal msg As String _
+                                             = "ƒf[ƒ^‚ð‰ðÍ‚µ‚Ä‚¢‚Ü‚·", _
+                              Optional ByVal divisor As Long = 1000)
 
+Attribute Animation.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚É•\Ž¦‚·‚éƒAƒjƒ[ƒVƒ‡ƒ“"
+
+    'ƒhƒbƒg‚Ì‘Œ¸‚ÅƒAƒjƒ[ƒVƒ‡ƒ“‚ð•\Œ»‚·‚é
     With Me
-        'ƒAƒjƒ[ƒVƒ‡ƒ“•—
         Dim dotMark As String
         Dim criteria As Double: criteria = currentCounts / divisor
         Select Case criteria
@@ -239,8 +252,8 @@ Attribute ShowWaitingAnime.VB_Description = "ƒXƒe[ƒ^ƒXƒo[‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ð•\Ž
             Case Is >= 9
                 dotMark = "..."
         End Select
-
-        .Display m
     End With
 
-End Sub
+    Animation = msg & dotMark
+
+End Property

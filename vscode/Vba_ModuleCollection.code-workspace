@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "Git",
+			"path": "../.git"
+		},
+		{
+			"name": "VSCode",
+			"path": "."
+		},
+		{
+			"name": "All",
+			"path": "../"
+		},
+	],
+	"settings": {
+   /* ---------------------------
+      エンコード
+   --------------------------- */
+	 "files.autoGuessEncoding": false,
+		"[vba]"                 : {
+		  "files.encoding": "shiftjis"
+		},
+ }
+}

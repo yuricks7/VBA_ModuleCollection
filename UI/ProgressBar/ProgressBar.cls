@@ -93,6 +93,7 @@ End Sub
 '
 Public Sub Flash(Optional ByVal msg As String, _
                  Optional ByVal canResumeScreen As Boolean = False)
+Attribute Eraser.VB_Description = "ステータスバーにメッセージを点滅させる"
 
     If msg = "" Then msg = pMessage
 
@@ -114,6 +115,7 @@ End Sub
 '
 Public Sub Display(Optional ByVal msg As String, _
                    Optional ByVal canResumeScreen As Boolean = False)
+Attribute Eraser.VB_Description = "ステータスバーにメッセージを表示する"
 
     If msg = "" Then msg = pMessage
 
@@ -235,7 +237,6 @@ Public Property Get Animation(ByVal currentCounts As Long, _
                               Optional ByVal msg As String _
                                              = "データを解析しています", _
                               Optional ByVal divisor As Long = 1000)
-
 Attribute Animation.VB_Description = "ステータスバーに表示するアニメーション"
 
     'ドットの増減でアニメーションを表現する

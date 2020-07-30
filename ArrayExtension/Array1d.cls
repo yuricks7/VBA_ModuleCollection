@@ -192,7 +192,7 @@ End Property
 Public Function Extend(Optional ByVal maxIndex As Long = 0) As Array1d
 Attribute Extend.VB_Description = "配列の最大要素数を増やす"
 
-    pArray = privatelyExtend(pArray)
+    pArray = subExtend(pArray)
 
     Set Extend = Me
 
@@ -209,9 +209,9 @@ End Function
 '
 ' @return {Variant} 拡張後の配列
 '
-Private Function privatelyExtend(ByVal srcArray As Variant, _
-                                 Optional ByVal maxIndex As Long = 0 _
-                                 ) As Variant
+Private Function subExtend(ByVal srcArray As Variant, _
+                           Optional ByVal maxIndex As Long = 0 _
+                           ) As Variant
     '拡張サイズを確認
     Dim extension As Long
     If maxIndex = 0 Then '判定方法…？
@@ -225,7 +225,7 @@ Private Function privatelyExtend(ByVal srcArray As Variant, _
     '値を保持したまま拡張
     ReDim Preserve srcArray(extension)
 
-    privatelyExtend = srcArray
+    subExtend = srcArray
 
 End Function
 
@@ -243,7 +243,7 @@ Attribute Push.VB_Description = "配列の末尾に値を挿入する"
     Me.Extend
 
     '最後尾に追加
-    pArray = privatelyPush(pArray, var)
+    pArray = subPush(pArray, var)
 
     Set Push = Me
 
@@ -260,13 +260,13 @@ End Function
 '
 ' @return {Variant} 追加後の配列
 '
-Private Function privatelyPush(ByRef srcArray As Variant, _
-                               ByVal var As Variant) As Variant
+Private Function subPush(ByRef srcArray As Variant, _
+                         ByVal var As Variant) As Variant
 
     '最後尾に追加
     srcArray(UBound(srcArray)) = var
 
-    privatelyPush = srcArray
+    subPush = srcArray
 
 End Function
 
@@ -306,7 +306,7 @@ End Function
 ''
 ' 配列内の要素をさらに区切る
 '
-' @param {Long} [maxIndex] インデックスの最大値
+' @param {String} [delimiter] 区切り文字
 '
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
@@ -323,7 +323,7 @@ Attribute Subdivide.VB_Description = "特定の文字列で要素を区切る"
 
         Dim t As Long
         For t = 0 To UBound(tmpArray)
-            newArray = privatelyAdd(newArray, tmpArray(t), newIndex)
+            newArray = subAdd(newArray, tmpArray(t), newIndex)
 
             newIndex = newIndex + 1
         Next t
@@ -342,20 +342,20 @@ End Function
 '
 ' @return {Variant} 追加後の配列
 '
-Private Function privatelyAdd(ByRef srcArray As Variant, _
-                              ByVal var As Variant, _
-                              Optional ByVal insertionPosition As Long = 0 _
-                              ) As Variant
+Private Function subAdd(ByRef srcArray As Variant, _
+                        ByVal var As Variant, _
+                        Optional ByVal insertionPosition As Long = 0 _
+                        ) As Variant
 
     '配列を拡張
     If insertionPosition <> 0 Then
-        srcArray = privatelyExtend(srcArray, insertionPosition)
+        srcArray = subExtend(srcArray, insertionPosition)
     End If
 
     '最後尾に追加
-    srcArray = privatelyPush(srcArray, var)
+    srcArray = subPush(srcArray, var)
 
-    privatelyAdd = srcArray
+    subAdd = srcArray
 
 End Function
 
@@ -365,8 +365,8 @@ End Function
 ' @note
 '   今のところ、要素が「すべてString型」であることを前提としている。
 '
-' @param {String} erasing   除去する文字列
-' @param {String} eraseMode 一致条件
+' @param {String} erasing     除去する文字列
+' @param {String} [eraseMode] 一致条件
 '
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
@@ -374,6 +374,7 @@ Public Function Eraser(ByVal erasing As String, _
                        Optional ByVal eraseMode As eEraseMode _
                                       = eEraseMode.eExactlyErase _
                        ) As Array1d
+Attribute Subdivide.VB_Description = "全要素の値から特定の文字列を除去する"
 
     Dim i As Long, temp As String, keyPosition As Long:
     For i = 0 To Me.Length
@@ -415,6 +416,7 @@ End Function
 '
 Public Function Filter(ByVal filterMode As eFilterMode, _
                        Optional ByVal searchKey As String = "") As Variant
+Attribute Subdivide.VB_Description = "全要素から条件を満たす要素を配列で取得する"
 
     Dim retArray As Variant: ReDim retArray(0)
     Dim retElement As String: retElement = ""
@@ -425,7 +427,7 @@ Public Function Filter(ByVal filterMode As eFilterMode, _
         retElement = Me.Element(i)
 
         If canAdd(filterMode, retElement, searchKey, i) Then
-            retArray = privatelyAdd(retArray, retElement, n)
+            retArray = subAdd(retArray, retElement, n)
             n = n + 1
         End If
 
@@ -443,28 +445,28 @@ Private Function canAdd(ByVal filterMode As eFilterMode, _
                         ByVal var As String, _
                         ByVal searchKey As String, _
                         ByVal idx As Long) As Boolean
-    
+
     Dim ret As Boolean: ret = False
-    
+
     Select Case filterMode
         Case eFilterMode.eExactMatch
             If var = searchKey Then ret = True
-        
+
         Case eFilterMode.ePartialMatch
             If InStr(var, searchKey) Then ret = True
-                    
+
         Case eFilterMode.eForwardMatch
             If var Like searchKey & "*" Then ret = True
-        
+
         Case eFilterMode.eBackwardMatch
             If var Like "*" & searchKey Then ret = True
-        
+
         Case eFilterMode.eEvenIndexes
             If idx Mod 2 = 0 Then ret = True
-        
+
         Case eFilterMode.eOddIndexes
             If idx Mod 2 = 1 Then ret = True
-    
+
     End Select
 
     canAdd = ret

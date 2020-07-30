@@ -14,11 +14,17 @@ Option Explicit
 
 Public Enum eFilterMode
     eExactMatch
+    ePartialMatch
     eForwardMatch
     eBackwardMatch
-    ePartialMatch
     eEvenIndexes
     eOddIndexes
+End Enum
+
+Public Enum eEraseMode
+    eExactlyErase
+    eForwardErase
+    eBackwardErase
 End Enum
 
 Private pArray As Variant
@@ -195,6 +201,9 @@ End Function
 ''
 ' 配列を拡張する
 '
+' 【参照】VBA 動的配列で要素数を意識せずに拡張する方法 | t-hom’s diary
+' https://thom.hateblo.jp/entry/2015/03/19/213019
+'
 ' @param {Variant} srcArray   拡張する配列
 ' @param {Long}    [maxIndex] 配列の要素数
 '
@@ -222,9 +231,6 @@ End Function
 
 ''
 ' 最後尾に要素を追加
-'
-' 【参照】VBA 動的配列で要素数を意識せずに拡張する方法 | t-hom’s diary
-' https://thom.hateblo.jp/entry/2015/03/19/213019
 '
 ' @param {Variant} 代入値
 '
@@ -359,32 +365,54 @@ End Function
 ' @note
 '   今のところ、要素が「すべてString型」であることを前提としている。
 '
-' @param {String} erasing 除去する文字列
+' @param {String} erasing   除去する文字列
+' @param {String} eraseMode 一致条件
 '
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
-Public Function Eraser(ByVal erasing As String) As Array1d
-Attribute Eraser.VB_Description = "全要素から特定の文字列を除去する"
+Public Function Eraser(ByVal erasing As String, _
+                       Optional ByVal eraseMode As eEraseMode _
+                                      = eEraseMode.eExactlyErase _
+                       ) As Array1d
 
-    Dim i As Long
+    Dim i As Long, temp As String, keyPosition As Long:
     For i = 0 To Me.Length
-        pArray(i) = Replace(pArray(i), erasing, "")
+        temp = pArray(i)
+        keyPosition = InStr(temp, erasing)
+    
+        Select Case eraseMode
+            Case eEraseMode.eExactlyErase
+                temp = Replace(temp, erasing, "")
+            
+            Case eEraseMode.eForwardErase
+                If keyPosition > 0 Then
+                    temp = Right(temp, Len(temp) - keyPosition)
+                End If
+            
+            Case eEraseMode.eBackwardErase
+                If keyPosition > 0 Then: temp = Left(temp, keyPosition - 1)
+            
+            Case Else
+            
+        End Select
+        
+        pArray(i) = temp
+    
     Next i
 
 End Function
 
 ''
-' 全要素から条件を満たす要素を取得する
+' 全要素から条件を満たす要素を配列で取得する
 '
 ' @note
 '   今のところ、要素が「すべてString型」であることを前提としている。
 '
-' @param {String} erasing 除去する文字列
+' @param {String} filterMode  一致条件
+' @param {String} [searchKey] 検索する文字列
 '
 ' @return {Variant} 抽出した配列
 '
-'Public Function Filter(ByVal filterMode As eFilterMode, _
-'                       Optional ByVal searchKey As String = "") As Array1d
 Public Function Filter(ByVal filterMode As eFilterMode, _
                        Optional ByVal searchKey As String = "") As Variant
 
@@ -404,12 +432,7 @@ Public Function Filter(ByVal filterMode As eFilterMode, _
 Continue:
     Next i
     
-'    Me.Init (UBound(retArray))
-'    pArray = retArray
-    
     Filter = retArray
-    
-'    Set Filter = Me
 
 End Function
 
@@ -427,15 +450,15 @@ Private Function canAdd(ByVal filterMode As eFilterMode, _
         Case eFilterMode.eExactMatch
             If var = searchKey Then ret = True
         
+        Case eFilterMode.ePartialMatch
+            If InStr(var, searchKey) Then ret = True
+                    
         Case eFilterMode.eForwardMatch
             If var Like searchKey & "*" Then ret = True
         
         Case eFilterMode.eBackwardMatch
             If var Like "*" & searchKey Then ret = True
         
-        Case eFilterMode.ePartialMatch
-            If InStr(var, searchKey) Then ret = True
-                    
         Case eFilterMode.eEvenIndexes
             If idx Mod 2 = 0 Then ret = True
         

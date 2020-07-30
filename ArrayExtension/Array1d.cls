@@ -21,10 +21,11 @@ Public Enum eFilterMode
     eOddIndexes
 End Enum
 
-Public Enum eEraseMode
-    eExactlyErase
-    eForwardErase
-    eBackwardErase
+Public Enum eSearchMode
+    eExactly
+    ePartially
+    eForward
+    eBackward
 End Enum
 
 Private pArray As Variant
@@ -365,16 +366,16 @@ End Function
 ' @note
 '   今のところ、要素が「すべてString型」であることを前提としている。
 '
-' @param {String} erasing     除去する文字列
-' @param {String} [eraseMode] 一致条件
+' @param {String}      erasing     除去する文字列
+' @param {eSearchMode} [eraseMode] 一致条件
 '
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
 Public Function Eraser(ByVal erasing As String, _
-                       Optional ByVal eraseMode As eEraseMode _
-                                      = eEraseMode.eExactlyErase _
+                       Optional ByVal eraseMode As eSearchMode _
+                                      = eSearchMode.eExactly _
                        ) As Array1d
-Attribute Subdivide.VB_Description = "全要素の値から特定の文字列を除去する"
+Attribute Eraser.VB_Description = "全要素の値から特定の文字列を除去する"
 
     Dim i As Long, temp As String, keyPosition As Long:
     For i = 0 To Me.Length
@@ -382,16 +383,19 @@ Attribute Subdivide.VB_Description = "全要素の値から特定の文字列を除去する"
         keyPosition = InStr(temp, erasing)
 
         Select Case eraseMode
-            Case eEraseMode.eExactlyErase
-                temp = Replace(temp, erasing, "")
+            Case eSearchMode.eExactly
+                temp = VBA.Replace(temp, erasing, "") '（違い…？）
 
-            Case eEraseMode.eForwardErase
-                If keyPosition > 0 Then
-                    temp = Right(temp, Len(temp) - keyPosition)
-                End If
+            Case eSearchMode.ePartially
+                temp = VBA.Replace(temp, erasing, "") '（違い…？）
 
-            Case eEraseMode.eBackwardErase
-                If keyPosition > 0 Then: temp = Left(temp, keyPosition - 1)
+            Case eSearchMode.eForward
+                If keyPosition = 0 Then GoTo Continue
+                temp = Right(temp, Len(temp) - keyPosition)
+
+            Case eSearchMode.eBackward
+                If keyPosition = 0 Then GoTo Continue
+                temp = Left(temp, keyPosition - 1)
 
             Case Else
 
@@ -399,6 +403,7 @@ Attribute Subdivide.VB_Description = "全要素の値から特定の文字列を除去する"
 
         pArray(i) = temp
 
+Continue:
     Next i
 
 End Function
@@ -416,7 +421,7 @@ End Function
 '
 Public Function Filter(ByVal filterMode As eFilterMode, _
                        Optional ByVal searchKey As String = "") As Variant
-Attribute Subdivide.VB_Description = "全要素から条件を満たす要素を配列で取得する"
+Attribute Filter.VB_Description = "全要素から条件を満たす要素を配列で取得する"
 
     Dim retArray As Variant: ReDim retArray(0)
     Dim retElement As String: retElement = ""
@@ -472,6 +477,59 @@ Private Function canAdd(ByVal filterMode As eFilterMode, _
     canAdd = ret
 
 End Function
+
+''
+' 全要素の値から特定の値を入れ替える
+'
+' @note
+'   今のところ、要素が「すべてString型」であることを前提としている。
+'
+' @param {String}      oldValue      除去する文字列
+' @param {String}      newValue      除去する文字列
+' @param {String}      erasing       除去する文字列
+' @param {eSearchMode} [replaceMode] 一致条件
+'
+' @return {Array1d} Me（メソッドチェーンを可能にするため）
+'
+Public Sub Replace(ByVal oldValue As String, _
+                   ByVal newValue As String, _
+                   Optional ByVal replaceMode As eSearchMode _
+                                  = eSearchMode.eExactly)
+Attribute Filter.VB_Description = "全要素の値から特定の値を入れ替える"
+
+    Dim i As Long, temp As String, keyPosition As Long
+    For i = 0 To Me.Length
+        temp = pArray(i)
+        keyPosition = InStr(temp, oldValue)
+
+        Select Case replaceMode
+            Case eSearchMode.eExactly
+                If temp = oldValue Then temp = newValue
+
+            Case eSearchMode.ePartially
+                If keyPosition = 0 Then GoTo Continue
+                temp = VBA.Replace(temp, oldValue, newValue)
+
+            Case eSearchMode.eForward
+                If keyPosition = 0 Then GoTo Continue
+                temp = Right(temp, Len(temp) - keyPosition)
+                temp = newValue & temp
+
+            Case eSearchMode.eBackward
+                If keyPosition = 0 Then GoTo Continue
+                temp = Left(temp, keyPosition - 1)
+                temp = temp & newValue
+
+            Case Else
+
+        End Select
+
+        pArray(i) = temp
+
+Continue:
+    Next i
+
+End Sub
 
 ''
 ' 配列を連結する

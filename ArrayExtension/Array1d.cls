@@ -2,15 +2,30 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name            = "Array1d"
+Attribute VB_Name = "Array1d"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable       = False
-Attribute VB_PredeclaredId   = True
-Attribute VB_Exposed         = False
-Attribute VB_Description     = "一次元配列を扱いやすくします。"
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Attribute VB_Description = "一次元配列を扱いやすくします。"
 Option Explicit
 
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
+
+Public Enum eFilterMode
+    eExactMatch
+    ePartialMatch
+    eForwardMatch
+    eBackwardMatch
+    eEvenIndexes
+    eOddIndexes
+End Enum
+
+Public Enum eEraseMode
+    eExactlyErase
+    eForwardErase
+    eBackwardErase
+End Enum
 
 Private pArray As Variant
 
@@ -186,6 +201,9 @@ End Function
 ''
 ' 配列を拡張する
 '
+' 【参照】VBA 動的配列で要素数を意識せずに拡張する方法 | t-hom’s diary
+' https://thom.hateblo.jp/entry/2015/03/19/213019
+'
 ' @param {Variant} srcArray   拡張する配列
 ' @param {Long}    [maxIndex] 配列の要素数
 '
@@ -213,9 +231,6 @@ End Function
 
 ''
 ' 最後尾に要素を追加
-'
-' 【参照】VBA 動的配列で要素数を意識せずに拡張する方法 | t-hom’s diary
-' https://thom.hateblo.jp/entry/2015/03/19/213019
 '
 ' @param {Variant} 代入値
 '
@@ -248,9 +263,6 @@ End Function
 Private Function privatelyPush(ByRef srcArray As Variant, _
                                ByVal var As Variant) As Variant
 
-'    '配列を拡張
-'    srcArray = privatelyExtend(srcArray)
-
     '最後尾に追加
     srcArray(UBound(srcArray)) = var
 
@@ -268,7 +280,7 @@ End Function
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
 Public Function Reverse() As Array1d
-Attribute Push.VB_Description = "配列を反転する"
+Attribute Reverse.VB_Description = "配列を反転する"
 
     Dim low As Long:   low = LBound(pArray)
     Dim high As Long: high = UBound(pArray)
@@ -299,14 +311,14 @@ End Function
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
 Public Function Subdivide(Optional ByVal delimiter As String = ", ") As Array1d
-Attribute Push.VB_Description = "特定の文字列で要素を区切る"
+Attribute Subdivide.VB_Description = "特定の文字列で要素を区切る"
 
     Dim newArray As Variant: ReDim newArray(0)
     Dim tmpArray As Variant: ReDim tmpArray(0)
     Dim newIndex As Long: newIndex = 0
 
     Dim i As Long
-    For i = 0 To UBound(pArray)
+    For i = 0 To Me.Length
         tmpArray = Split(pArray(i), delimiter)
 
         Dim t As Long
@@ -330,7 +342,7 @@ End Function
 '
 ' @return {Variant} 追加後の配列
 '
-Private Function privatelyAdd(ByVal srcArray As Variant, _
+Private Function privatelyAdd(ByRef srcArray As Variant, _
                               ByVal var As Variant, _
                               Optional ByVal insertionPosition As Long = 0 _
                               ) As Variant
@@ -353,17 +365,109 @@ End Function
 ' @note
 '   今のところ、要素が「すべてString型」であることを前提としている。
 '
-' @param {String} erasing 除去する文字列
+' @param {String} erasing   除去する文字列
+' @param {String} eraseMode 一致条件
 '
 ' @return {Array1d} Me（メソッドチェーンを可能にするため）
 '
-Public Function Eraser(ByVal erasing As String) As Array1d
-Attribute Eraser.VB_Description = "全要素から特定の文字列を除去する"
+Public Function Eraser(ByVal erasing As String, _
+                       Optional ByVal eraseMode As eEraseMode _
+                                      = eEraseMode.eExactlyErase _
+                       ) As Array1d
+
+    Dim i As Long, temp As String, keyPosition As Long:
+    For i = 0 To Me.Length
+        temp = pArray(i)
+        keyPosition = InStr(temp, erasing)
+    
+        Select Case eraseMode
+            Case eEraseMode.eExactlyErase
+                temp = Replace(temp, erasing, "")
+            
+            Case eEraseMode.eForwardErase
+                If keyPosition > 0 Then
+                    temp = Right(temp, Len(temp) - keyPosition)
+                End If
+            
+            Case eEraseMode.eBackwardErase
+                If keyPosition > 0 Then: temp = Left(temp, keyPosition - 1)
+            
+            Case Else
+            
+        End Select
+        
+        pArray(i) = temp
+    
+    Next i
+
+End Function
+
+''
+' 全要素から条件を満たす要素を配列で取得する
+'
+' @note
+'   今のところ、要素が「すべてString型」であることを前提としている。
+'
+' @param {String} filterMode  一致条件
+' @param {String} [searchKey] 検索する文字列
+'
+' @return {Variant} 抽出した配列
+'
+Public Function Filter(ByVal filterMode As eFilterMode, _
+                       Optional ByVal searchKey As String = "") As Variant
+
+    Dim retArray As Variant: ReDim retArray(0)
+    Dim retElement As String: retElement = ""
+    Dim n As Long: n = 0
 
     Dim i As Long
-    For i = 0 To UBound(pArray)
-        pArray(i) = Replace(pArray(i), erasing, "")
+    For i = 0 To Me.Length
+        retElement = Me.Element(i)
+        
+        If canAdd(filterMode, retElement, searchKey, i) Then
+            retArray = privatelyAdd(retArray, retElement, n)
+            n = n + 1
+        End If
+
+Continue:
     Next i
+    
+    Filter = retArray
+
+End Function
+
+''
+' 追加するための条件を満たしているか確認
+'
+Private Function canAdd(ByVal filterMode As eFilterMode, _
+                        ByVal var As String, _
+                        ByVal searchKey As String, _
+                        ByVal idx As Long) As Boolean
+    
+    Dim ret As Boolean: ret = False
+    
+    Select Case filterMode
+        Case eFilterMode.eExactMatch
+            If var = searchKey Then ret = True
+        
+        Case eFilterMode.ePartialMatch
+            If InStr(var, searchKey) Then ret = True
+                    
+        Case eFilterMode.eForwardMatch
+            If var Like searchKey & "*" Then ret = True
+        
+        Case eFilterMode.eBackwardMatch
+            If var Like "*" & searchKey Then ret = True
+        
+        Case eFilterMode.eEvenIndexes
+            If idx Mod 2 = 0 Then ret = True
+        
+        Case eFilterMode.eOddIndexes
+            If idx Mod 2 = 1 Then ret = True
+    
+    End Select
+
+    canAdd = ret
 
 End Function
 
@@ -375,7 +479,7 @@ End Function
 ' @return {String} 連結した文字列
 '
 Public Function JoinVia(Optional ByVal delimiter As String = ", ") As String
-Attribute Eraser.VB_Description = "配列の要素を1連の文字列にする"
+Attribute JoinVia.VB_Description = "配列の要素を1連の文字列にする"
 
     Dim str As String: str = Join(pArray, delimiter)
     If str = "" Then str = "EMPTY"
@@ -390,7 +494,7 @@ End Function
 ' @param {String} [delimiter] 区切り文字
 '
 Public Sub PrintAll(Optional ByVal delimiter As String = ", ")
-Attribute Eraser.VB_Description = "配列の要素をログ出力する"
+Attribute PrintAll.VB_Description = "配列の要素をログ出力する"
 
     Dim str As String: str = JoinVia(delimiter)
 

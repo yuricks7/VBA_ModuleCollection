@@ -2,12 +2,12 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Array1d"
+Attribute VB_Name            = "Array1d"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
-Attribute VB_Description = "一次元配列を扱いやすくします。"
+Attribute VB_Creatable       = False
+Attribute VB_PredeclaredId   = True
+Attribute VB_Exposed         = False
+Attribute VB_Description     = "一次元配列を扱いやすくします。"
 Option Explicit
 
 ' ━━━━━━━━━━━ モジュール変数 ━━━━━━━━━━━
@@ -379,25 +379,25 @@ Public Function Eraser(ByVal erasing As String, _
     For i = 0 To Me.Length
         temp = pArray(i)
         keyPosition = InStr(temp, erasing)
-    
+
         Select Case eraseMode
             Case eEraseMode.eExactlyErase
                 temp = Replace(temp, erasing, "")
-            
+
             Case eEraseMode.eForwardErase
                 If keyPosition > 0 Then
                     temp = Right(temp, Len(temp) - keyPosition)
                 End If
-            
+
             Case eEraseMode.eBackwardErase
                 If keyPosition > 0 Then: temp = Left(temp, keyPosition - 1)
-            
+
             Case Else
-            
+
         End Select
-        
+
         pArray(i) = temp
-    
+
     Next i
 
 End Function
@@ -423,7 +423,7 @@ Public Function Filter(ByVal filterMode As eFilterMode, _
     Dim i As Long
     For i = 0 To Me.Length
         retElement = Me.Element(i)
-        
+
         If canAdd(filterMode, retElement, searchKey, i) Then
             retArray = privatelyAdd(retArray, retElement, n)
             n = n + 1
@@ -431,7 +431,7 @@ Public Function Filter(ByVal filterMode As eFilterMode, _
 
 Continue:
     Next i
-    
+
     Filter = retArray
 
 End Function

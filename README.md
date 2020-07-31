@@ -13,6 +13,14 @@
 **[ENG]** The Modules are developped/collected when developped VBA Tools.<br>
 Most of the Modules are On Edit so that they are NOT guaranteed. If ok, feel free to use/update.
 
+## Request To Users
+
+このリポジトリの作成者個人に不注意傾向があるため、誤字脱字、コメントの間違い等が残ったまま上げてしまうことがあります。
+もしお気づきの点がありましたら、ご遠慮無く[issues](https://github.com/yuricks7/VBA_ModuleCollection/issues)や[プルリク](https://github.com/yuricks7/VBA_ModuleCollection/pulls)、Twitter（[@yuricks7](https://twitter.com/yuricks7)）等でご報告頂けたら幸いです。
+
+**[ENG]** Because of the carelessness of the individual authors of this repository, there may be some typos or errors in comments that are left out.
+If you find something wrong in this repository, please feel free to report it via [Issues](https://github.com/yuricks7/VBA_ModuleCollection/issues), [Pull requests](https://github.com/yuricks7/VBA_ModuleCollection/pulls), or Twitter ([@yuricks7](https://twitter.com/yuricks7)).
+
 ## LICENSE
 
 - MITライセンスで作成しております。詳細は、<b>[こちら](./LICENSE)</b>をご参照ください。
